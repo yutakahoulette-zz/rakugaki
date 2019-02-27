@@ -1,0 +1,9 @@
+export const MAX_SIZE = 1200
+export const UNIT_SIZE = 24
+export const PADDING = 32
+export const HALF_UNIT_SIZE = UNIT_SIZE / 2
+export const QUARTER_UNIT_SIZE = UNIT_SIZE / 4
+export const DOT_RADIUS = 1.5
+export const STROKE_WIDTH = 2
+export const DRAWING_ID = 'continuous-line-drawing'
+export const SHAKE_MAX = 16
