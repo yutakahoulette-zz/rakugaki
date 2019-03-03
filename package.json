@@ -1,14 +1,18 @@
 {
   "scripts": {
     "dev": "parcel src/index.html -d dev --open",
-    "build": "parcel build src/index.html -d docs --public-url ./ --experimental-scope-hoisting"
+    "build": "parcel build src/index.html -d docs --public-url ./ --experimental-scope-hoisting",
+    "test": "tape -r esm test/**/*.js"
   },
   "devDependencies": {
+    "esm": "^3.2.9",
     "parcel-bundler": "1.11.0",
-    "tachyons": "4.11.1"
+    "tachyons": "4.11.1",
+    "tape": "^4.10.1"
   },
   "dependencies": {
     "hyperapp": "1.2.9",
+    "npm": "^6.8.0",
     "picostyle": "2.0.1",
     "ramda": "0.25.0",
     "tone": "13.4.9"
