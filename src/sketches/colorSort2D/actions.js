@@ -1,7 +1,5 @@
-// NPM
 import { update } from 'ramda'
 
-// Utils
 import { swapProps } from '../../utils/swapProps'
 import { getElmFrom2dArray } from '../../utils/getElmFrom2dArray'
 

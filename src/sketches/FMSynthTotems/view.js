@@ -1,4 +1,3 @@
-// NPM
 import { h } from 'hyperapp'
 import picostyle from 'picostyle'
 

@@ -1,7 +1,5 @@
 import { values } from 'ramda'
-import { shuffle } from '../../utils/shuffle'
-import { segment } from '../../utils/segment'
-import { albers } from '../../constants/colors'
+import { ALBERS } from '../../constants/colors'
 
 export const LENGTH = 32
 export const HALF_LENGTH = LENGTH / 2
@@ -16,7 +14,6 @@ export const DIRECTIONS = [
   'left',
   'upLeft'
 ]
-export const COLORS = values(albers)
 
-export const colorsLen = COLORS.length / 2
-export const getColorPairs = () => segment(2, shuffle(COLORS))
+export const COLORS = values(ALBERS)
+export const COLORS_LEN = COLORS.length / 2

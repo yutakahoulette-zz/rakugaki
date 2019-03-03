@@ -2,7 +2,8 @@ import { PADDING, COLORS, MIN_SIZE } from './consts'
 import { randomNum } from '../../utils/randomNum'
 
 export function init(actions) {
-  const maxHeight = window.innerHeight - ENV.navHeight - ENV.disclaimerHeight
+  const maxHeight =
+    window.innerHeight - (ENV.navHeight || 0) - (ENV.disclaimerHeight || 0)
   const maxWidth = window.innerWidth
   const halfWidth = maxWidth / 2
   const halfHeight = maxHeight / 2

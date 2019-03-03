@@ -4,6 +4,7 @@ import { sketches } from './sketches'
 
 export const actions = mergeReduce({
   obj: {
+    render: () => (state) => state,
     setParams: () => {
       return {
         params: getParams()

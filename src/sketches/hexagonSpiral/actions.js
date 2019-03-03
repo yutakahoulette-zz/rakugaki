@@ -1,4 +1,5 @@
-import { colorsLen, getColorPairs } from './consts'
+import { COLORS_LEN } from './consts'
+import { getColorPairs } from './getColorPairs'
 
 export const actions = {
   set: (obj) => () => obj,
@@ -16,9 +17,9 @@ export const actions = {
     const incrementNewColorRotation =
       !isFirstRotation && oldRotationIsEven && isBeginningOfRotation
     const newColorRotation =
-      (colorRotation + (incrementNewColorRotation ? 1 : 0)) % colorsLen
+      (colorRotation + (incrementNewColorRotation ? 1 : 0)) % COLORS_LEN
     const newColorPairs =
-      newColorRotation === colorsLen - 1 &&
+      newColorRotation === COLORS_LEN - 1 &&
       isBeginningOfRotation &&
       !newRotationIsEven
         ? getColorPairs()

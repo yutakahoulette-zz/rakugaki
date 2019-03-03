@@ -1,6 +1,6 @@
-// NPM
 import { h } from 'hyperapp'
 import picostyle from 'picostyle'
+
 import { CIRCLE_RADIUS } from './consts'
 
 import { init } from './init'

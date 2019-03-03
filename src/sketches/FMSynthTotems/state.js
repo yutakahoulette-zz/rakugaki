@@ -9,5 +9,6 @@ export const state = {
   bpm: BPM,
   swing: 0,
   isShowingModal: false,
-  editIndex: 0
+  editIndex: 0,
+  isLoading: true
 }

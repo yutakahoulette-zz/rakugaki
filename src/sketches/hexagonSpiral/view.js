@@ -1,8 +1,8 @@
 import { h } from 'hyperapp'
 import picostyle from 'picostyle'
-import { EqTriangle } from '../../polygons/eqTriangle'
 import { createHex } from './createHex'
 import { HALF_LENGTH, HALF_HEIGHT } from './consts'
+import { EqTriangle } from '../../polygons/eqTriangle'
 
 const style = picostyle(h)
 

@@ -1,11 +1,9 @@
-// NPM
 import { times } from 'ramda'
-
-// Utils
-import { getClampedDimensions } from '../../utils/getClampedDimensions'
 
 import { play } from './play'
 import { MAX_WIDTH, MAX_HEIGHT, UNIT_SIZE, UNIT_SIZE_HALF } from './consts'
+
+import { getClampedDimensions } from '../../utils/getClampedDimensions'
 
 export const blankGrid = ({ unit, pack }) =>
   times(

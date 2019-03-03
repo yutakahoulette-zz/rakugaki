@@ -1,13 +1,6 @@
 import { flatten } from 'ramda'
 import { Transport, Pattern, Draw, FMSynth, PingPongDelay } from 'tone'
 
-import { getClampedDimensions } from '../../utils/getClampedDimensions'
-import { randomNum } from '../../utils/randomNum'
-import { randomElm } from '../../utils/randomElm'
-import { toHertz } from '../../utils/toHertz'
-import { percentInRange } from '../../utils/percentInRange'
-import { polygonArea } from '../../utils/polygonArea'
-import { gainToDb } from '../../utils/gainToDb'
 import {
   BPM,
   SIZE,
@@ -20,6 +13,14 @@ import {
   MIN_WIDTH,
   WAVES
 } from './consts'
+
+import { getClampedDimensions } from '../../utils/getClampedDimensions'
+import { randomNum } from '../../utils/randomNum'
+import { randomElm } from '../../utils/randomElm'
+import { toHertz } from '../../utils/toHertz'
+import { percentInRange } from '../../utils/percentInRange'
+import { polygonArea } from '../../utils/polygonArea'
+import { gainToDb } from '../../utils/gainToDb'
 
 export const init = (actions) => {
   const offsetY = document.querySelector('#controls').offsetHeight + PADDING
@@ -86,7 +87,8 @@ export const init = (actions) => {
     playingIndexes,
     Transport,
     bpm: BPM,
-    swing: 0
+    swing: 0,
+    isLoading: false
   })
 }
 
@@ -143,7 +145,7 @@ const createSequences = (i, notes, actions) => {
     synth,
     oscillator,
     modulation,
-    harmonicity: synth.harmonicity.value,
+    harmonicity: synth.harmonicity.value * 10,
     modulationIndex: synth.modulationIndex.value,
     release,
     volume,

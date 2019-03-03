@@ -1,10 +1,7 @@
-// NPM
 import { compose, propEq, findIndex, drop, flatten } from 'ramda'
 
-// Consts
 import { MS } from './consts'
 
-// Utils
 import { delayEach } from '../../utils/delayEach'
 import { get2dCoords } from '../../utils/get2dCoords'
 

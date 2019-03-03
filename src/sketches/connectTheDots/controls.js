@@ -1,16 +1,13 @@
-// NPM
 import { h } from 'hyperapp'
 import picostyle from 'picostyle'
 import { dropLast, range } from 'ramda'
 
 import { handleClickIndex } from './handleClickIndex'
-
 import { DRAWING_ID, SHAKE_MAX } from './consts'
 
-// Consts
-import { albers } from '../../constants/colors'
+import { ALBERS } from '../../constants/colors'
+const COLORS = Object.keys(ALBERS)
 
-// Utils
 import { classNames } from '../../utils/classNames'
 import { downloadSVG } from '../../utils/downloadSVG'
 import { randomElm } from '../../utils/randomElm'
@@ -38,19 +35,24 @@ const CircleButton = style('button')({
 })
 
 const ColorButtons = ({ color, actions }) => {
-  const keys = Object.keys(albers)
-  const btns = keys.map((key) => {
-    const btnColor = albers[key]
+  const btns = COLORS.map((key) => {
+    const btnColor = ALBERS[key]
     const selected = color === btnColor
     const bgStyle = {
       background: btnColor
     }
-    const className = classNames({
+    const circleClassNames = classNames({
       ma1: true,
       selected: selected
     })
     const onclick = () => actions.set({ color: btnColor })
-    return <CircleButton style={bgStyle} class={className} onclick={onclick} />
+    return (
+      <CircleButton
+        style={bgStyle}
+        class={circleClassNames}
+        onclick={onclick}
+      />
+    )
   })
   return (
     <div
@@ -90,17 +92,21 @@ export const Controls = ({ state, actions }) => {
     points,
     clickIndex,
     isShaking,
+    isLoading,
     shakeLevel
   } = state
 
   const style = { maxWidth: dimensions.px.width + 'px' }
 
+  const controlsClassNames = classNames(
+    {
+      'o-0': isLoading
+    },
+    'delay flex flex-wrap items-center justify-between pt2 f6'
+  )
+
   return (
-    <div
-      style={style}
-      id="controls"
-      class="fadeIn--delay flex flex-wrap items-center justify-between pt2 f6"
-    >
+    <div style={style} id="controls" class={controlsClassNames}>
       <ColorButtons color={color} actions={actions} />
       <Fill fill={fill} actions={actions} />
       <button

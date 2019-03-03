@@ -1,8 +1,6 @@
-// NPM
 import { h } from 'hyperapp'
 import picostyle from 'picostyle'
 
-// Consts
 import { RADIUS } from './consts'
 
 import { createGrid } from './createGrid'

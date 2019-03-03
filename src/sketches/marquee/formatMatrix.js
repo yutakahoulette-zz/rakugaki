@@ -1,6 +1,6 @@
 import { compose, filter, map, split } from 'ramda'
-import { rotate2dArray } from '../../utils/rotate2dArray'
 import { SPACER } from './consts'
+import { rotate2dArray } from '../../utils/rotate2dArray'
 
 const flipVals = (arr) =>
   arr.map((arr2) => arr2.map((val) => (val === '0' ? 1 : 0)))

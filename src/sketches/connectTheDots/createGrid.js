@@ -24,6 +24,7 @@ export const createGrid = (elm, actions) => {
   )
   actions.set({
     grid,
-    dimensions
+    dimensions,
+    isLoading: false
   })
 }

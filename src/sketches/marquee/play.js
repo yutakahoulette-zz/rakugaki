@@ -1,7 +1,7 @@
 import { times } from 'ramda'
 import { keyMap } from './keyMap'
-import { delayEach } from '../../utils/delayEach'
 import { SPACER, MS } from './consts'
+import { delayEach } from '../../utils/delayEach'
 
 export const play = (actions) => {
   const state = actions.getState()

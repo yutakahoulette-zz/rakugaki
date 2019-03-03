@@ -13,6 +13,7 @@ export const FMSynthTotems = {
   description,
   path: 'FMSynthTotems',
   date: new Date(2019, 1, 25),
+  load: true,
   state,
   actions,
   view

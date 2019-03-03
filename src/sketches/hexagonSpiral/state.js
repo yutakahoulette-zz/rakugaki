@@ -1,4 +1,4 @@
-import { getColorPairs } from './consts'
+import { getColorPairs } from './getColorPairs'
 
 const colorPairs = getColorPairs()
 const colorPair = colorPairs[0]

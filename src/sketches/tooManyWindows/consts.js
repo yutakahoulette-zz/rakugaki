@@ -1,9 +1,8 @@
-import { salmon, teal, rust, lime, pollen } from '../../constants/colors'
-const colors = [salmon, teal, rust, lime, pollen]
+import { SALMON, TEAL, RUST, LIME, POLLEN } from '../../constants/colors'
+export const COLORS = [SALMON, TEAL, RUST, LIME, POLLEN]
 
 export const PADDING = 16
 export const MIN_SIZE = 200
-export const COLORS = colors
 export const COLORS_LEN = COLORS.length
 
 export const RESIZER_SIZE = 8

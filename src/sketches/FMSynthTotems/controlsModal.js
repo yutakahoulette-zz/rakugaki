@@ -1,10 +1,12 @@
 import { h } from 'hyperapp'
 
+import { getSynthTitle } from './getSynthTitle'
+import { WAVES, PATTERN_TYPES } from './consts'
+
 import { Modal } from '../../ui/modal'
 import { SelectField } from '../../ui/selectField'
 import { RangeField } from '../../ui/rangeField'
-import { getSynthTitle } from './getSynthTitle'
-import { WAVES, PATTERN_TYPES } from './consts'
+
 import { gainToDb } from '../../utils/gainToDb'
 
 export const ControlsModal = ({ actions, state }) => {
@@ -119,9 +121,8 @@ export const ControlsModal = ({ actions, state }) => {
           <RangeField
             label="Harmonicity"
             value={harmonicity}
-            min={0}
-            max={10}
             cb={updateToneStack({
+              transform: (x) => x / 10,
               actions,
               key: 'harmonicity',
               path: ['harmonicity', 'value'],
@@ -131,7 +132,7 @@ export const ControlsModal = ({ actions, state }) => {
         </Col>
         <Col>
           <RangeField
-            label="Modulation index"
+            label="Modulation"
             value={modulationIndex}
             min={0}
             max={100}

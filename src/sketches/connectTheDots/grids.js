@@ -1,10 +1,10 @@
 import { h } from 'hyperapp'
-import { UNIT_SIZE, HALF_UNIT_SIZE, DOT_RADIUS } from './consts'
-
 import { last } from 'ramda'
 
-import { reflectPoints } from '../../utils/reflectPoints'
+import { UNIT_SIZE, HALF_UNIT_SIZE, DOT_RADIUS } from './consts'
 import { handleClickIndex } from './handleClickIndex'
+
+import { reflectPoints } from '../../utils/reflectPoints'
 
 const cPlus = ({ cx, cy }) => [cx + HALF_UNIT_SIZE, cy + HALF_UNIT_SIZE]
 

@@ -58,6 +58,7 @@ export const actions = {
     })
     return {
       isPlaying: false,
+      isLoading: true,
       isShowingModal: false,
       clickPlayingIndexes: {}
     }

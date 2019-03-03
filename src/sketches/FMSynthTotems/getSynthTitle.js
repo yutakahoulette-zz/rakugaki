@@ -8,6 +8,8 @@ const abbreviateWave = (wave) => {
       return 'sqr'
     case 'pwm':
       return 'pwm'
+    default:
+      return ''
   }
 }
 

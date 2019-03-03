@@ -9,7 +9,8 @@ export const actions = {
       isEvenClick: true,
       points: [],
       previewPoints: [],
-      savedPoints: []
+      savedPoints: [],
+      isLoading: true
     }
   },
   stop: () => ({ savedPoints, enders }) => {

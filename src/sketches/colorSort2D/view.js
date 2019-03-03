@@ -1,11 +1,8 @@
-// NPM
 import { h } from 'hyperapp'
 import picostyle from 'picostyle'
 
-// Consts
 import { MS, RADIUS } from './consts'
 
-// Utils
 import { transitionString } from '../../utils/transitionString'
 
 import { createGrid } from './createGrid'

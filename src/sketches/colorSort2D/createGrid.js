@@ -1,11 +1,8 @@
-// NPM
 import { compose, sort, reverse, map, prop, times, uniq, flatten } from 'ramda'
 
-// Utils
 import { randomElm } from '../../utils/randomElm'
 import { getClampedDimensions } from '../../utils/getClampedDimensions'
 
-// Consts
 import { MAX_SIZE, UNIT_SIZE, UNIT_SIZE_HALF, COLORS } from './consts'
 
 import { animate } from './animate'

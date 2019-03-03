@@ -1,15 +1,18 @@
 import { h } from 'hyperapp'
 
 import { init } from './init'
-import { RangeField } from '../../ui/rangeField'
 import { ControlsModal } from './controlsModal'
 import { getSynthTitle } from './getSynthTitle'
 import { COUNT, COL_WIDTH } from './consts'
 
+import { RangeField } from '../../ui/rangeField'
+
+import { classNames } from '../../utils/classNames'
+
 export const Controls = ({ state, actions }) => {
-  const { isPlaying, toneStacks, bpm, swing } = state
+  const { isLoading, isPlaying, toneStacks, bpm, swing } = state
   return [
-    <div id="controls">
+    <div id="controls" class={classNames({ 'o-0': isLoading })}>
       <div class="flex pb3">
         {new Array(COUNT).fill().map((_, i) => {
           return (

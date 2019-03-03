@@ -1,44 +1,20 @@
-// NPM
 import { h } from 'hyperapp'
-import picostyle, { keyframes } from 'picostyle'
-
 import { sketches } from './sketches'
-
-// Utils
 import { firstKeyVal } from '../utils/firstKeyVal'
 import { isTouchDevice } from '../utils/isTouchDevice'
 import { getHeightById } from '../utils/getHeightById'
-
-// UI
+import { getParams } from '../utils/getParams'
 import { Modal } from '../ui/modal'
 import { NavButton } from '../ui/navButton'
 
 const sketchesLen = sketches.length - 1
 
-const style = picostyle(h)
+const setHeight = (id) => () => {
+  window.ENV[`${id}Height`] = getHeightById(id)
+}
 
 const srcUrl = (path = '') =>
   `https://github.com/yutakahoulette/rakugaki/tree/master/src/sketches/${path}`
-
-const fadeIn = keyframes({
-  '0%': {
-    opacity: '0'
-  },
-  '50%': {
-    opacity: '0'
-  },
-  '100%': {
-    opacity: '1'
-  }
-})
-
-const FadeWrapper = style('div')({
-  animation: `${fadeIn} 200ms forwards`
-})
-
-const ParentWrapper = style('div')({
-  fontFamily: 'Courier Next,courier,monospace'
-})
 
 // History link used for managing pushState
 const HistoryLink = ({ to, fn }, children) => {
@@ -54,7 +30,7 @@ const HistoryLink = ({ to, fn }, children) => {
   )
 }
 
-const navLinks = (actions) => {
+const sketchLi = (actions) => {
   return sketches.map((sketch, i) => {
     const [_, val] = firstKeyVal(sketch)
     return val.wip ? null : (
@@ -84,69 +60,77 @@ const Index = ({ actions }) => (
           Source code
         </a>
       </p>
-      <ul>{navLinks(actions)}</ul>
+      <ul>{sketchLi(actions)}</ul>
     </nav>
   </div>
+)
+
+const disclaimerText = `This sketch is best experienced on a non touch screen device 🙃`
+const Disclaimer = () => (
+  <div
+    id="disclaimer"
+    oncreate={setHeight('disclaimer')}
+    class="pv2 ph3 f6 bb b--moon-gray bg-washed-red tc fixed top-0 left-0 right-0"
+  >
+    <p class="ma0">{disclaimerText}</p>
+  </div>
+)
+
+const navClasses =
+  'fixed bottom-0 left-0 right-0 bt b--moon-gray bg-white z-999'
+const navContentClasses =
+  'container ph3 pv2 flex items-center justify-between tc f6'
+const Nav = ({ actions, title, description, showModal, path }) => (
+  <nav
+    id="nav"
+    class={navClasses}
+    ondestroy={actions.hideModal}
+    oncreate={setHeight('nav')}
+  >
+    <div class={navContentClasses}>
+      <HistoryLink to={`?`} fn={actions.setParams}>
+        <NavButton>{'<'}</NavButton>
+      </HistoryLink>
+      <div class="truncate ph3">{title}</div>
+      <NavButton onclick={actions.showModal}>?</NavButton>
+    </div>
+    <Modal isShowing={showModal} title={title} hideFn={actions.hideModal}>
+      <p>{description}</p>
+      {path && (
+        <div class="pt4">
+          <p>
+            <a class="f6" target="_blank" href={srcUrl(path)}>
+              Source code
+            </a>
+          </p>
+        </div>
+      )}
+    </Modal>
+  </nav>
 )
 
 const SketchWrapper = (
   { title, description, actions, showModal, noTouch, path = '' },
   children
 ) => {
-  const navClasses =
-    'fixed bottom-0 left-0 right-0 bt b--moon-gray bg-white z-999'
-  const navContentClasses =
-    'container ph3 pv2 flex items-center justify-between tc f6'
-  const disclaimerText = `This sketch is best experienced on a non touch screen device 🙃`
   const showDisclaimer = noTouch && isTouchDevice()
   return (
-    <FadeWrapper>
-      {showDisclaimer && (
-        <div
-          id="disclaimer"
-          class="pv2 ph3 f6 bb b--moon-gray bg-washed-red tc"
-        >
-          <p class="ma0">{disclaimerText}</p>
-        </div>
-      )}
+    <div>
       {children}
-      <nav id="nav" class={navClasses} ondestroy={actions.hideModal}>
-        <div class={navContentClasses}>
-          <HistoryLink to={`?`} fn={actions.setParams}>
-            <NavButton>{'<'}</NavButton>
-          </HistoryLink>
-          <div class="truncate ph3">{title}</div>
-          <NavButton onclick={actions.showModal}>?</NavButton>
-        </div>
-        <Modal isShowing={showModal} title={title} hideFn={actions.hideModal}>
-          <p>{description}</p>
-          {path && (
-            <div class="pt4">
-              <p>
-                <a class="f6" target="_blank" href={srcUrl(path)}>
-                  Source code
-                </a>
-              </p>
-            </div>
-          )}
-        </Modal>
-      </nav>
-      {/* the oncreate function is called first on the last element
-      in the markup */}
-      <div
-        oncreate={() => {
-          ;['nav', 'disclaimer'].forEach((id) => {
-            window.ENV[`${id}Height`] = getHeightById(id)
-          })
-        }}
+      {showDisclaimer && <Disclaimer />}
+      <Nav
+        actions={actions}
+        title={title}
+        description={description}
+        path={path}
+        showModal={showModal}
       />
-    </FadeWrapper>
+    </div>
   )
 }
 
 export const view = (state, actions) => {
-  const { params } = state
-  const sketchId = params.sketch
+  const sketchId = getParams().sketch || actions.params
   const sketch = sketchId && sketches[sketchesLen - Number(sketchId)]
   let page
   if (sketch) {
@@ -166,11 +150,9 @@ export const view = (state, actions) => {
   } else {
     page = <Index actions={actions} />
   }
-
   return (
-    <ParentWrapper
+    <div
       oncreate={() => {
-        actions.setParams()
         window.addEventListener('pushstate', actions.setParams)
         window.addEventListener('popstate', actions.setParams)
       }}
@@ -179,7 +161,7 @@ export const view = (state, actions) => {
         window.removeEventListener('popstate', actions.setParams)
       }}
     >
-      <FadeWrapper>{page}</FadeWrapper>
-    </ParentWrapper>
+      {page}
+    </div>
   )
 }
