@@ -9,7 +9,6 @@ export const tooManyWindows = {
   title: 'too many windows',
   description,
   date: new Date(2019, 0, 1),
-  noTouch: true,
   path: 'tooManyWindows',
   state,
   actions,

@@ -1,6 +1,61 @@
 import { COLORS_LEN } from './consts'
 
-const getXY = (ev) => [ev.clientX, ev.clientY]
+const getXY = (ev, isTouch = false) => {
+  if (isTouch) {
+    return [ev.touches[0].clientX, ev.touches[0].clientY]
+  }
+  return [ev.clientX, ev.clientY]
+}
+
+const handlePointerDown = ({ actions, i, actionName, isTouch }) => (ev) => {
+  ev.stopPropagation()
+  ev.preventDefault()
+  const [x, y] = getXY(ev, isTouch)
+  actions.updateZIndex({ i })
+  actions.setWindoProps({
+    i,
+    props: { coords: { x, y }, currentActionName: actionName }
+  })
+}
+
+const handlePointerUp = ({ actions, i }) => (ev) => {
+  ev.stopPropagation()
+  ev.preventDefault()
+  actions.setWindoProps({
+    i,
+    props: { currentActionName: undefined }
+  })
+}
+
+const handlePointerMove = ({
+  actions,
+  coords,
+  isActive,
+  updaterFn,
+  i,
+  isTouch
+}) => (ev) => {
+  ev.stopPropagation()
+  ev.preventDefault()
+  if (!isActive || !coords) {
+    return
+  }
+  const [x, y] = getXY(ev, isTouch)
+  const xDifference = x - coords.x
+  const yDifference = y - coords.y
+  const props = {
+    coords: { x, y }
+  }
+  const updaterProps = updaterFn({
+    yDifference,
+    xDifference
+  })
+  const mergedProps = {
+    ...props,
+    ...updaterProps
+  }
+  actions.setWindoProps({ i, props: mergedProps })
+}
 
 export const ElasticElmPartial = ({ actions, data, i }) => (
   { style = {}, component, updaterFn, actionName, styleProps = {} },
@@ -21,50 +76,31 @@ export const ElasticElmPartial = ({ actions, data, i }) => (
       ...styleProps,
       ...showResizers,
       ...key,
-      onmousedown: (ev) => {
-        ev.stopPropagation()
-        const [x, y] = getXY(ev)
-        actions.updateZIndex({ i })
-        actions.setWindoProps({
-          i,
-          props: { coords: { x, y }, currentActionName: actionName }
-        })
-      },
-      onmouseup: (ev) => {
-        ev.stopPropagation()
-        actions.setWindoProps({
-          i,
-          props: { currentActionName: undefined }
-        })
-      },
-      onmousemove: (ev) => {
-        ev.stopPropagation()
-        if (!isActive || !coords) {
-          return
-        }
-        const [x, y] = getXY(ev)
-        const xDifference = x - coords.x
-        const yDifference = y - coords.y
-        const props = {
-          coords: { x, y }
-        }
-        const updaterProps = updaterFn({
-          yDifference,
-          xDifference
-        })
-        const mergedProps = {
-          ...props,
-          ...updaterProps
-        }
-        actions.setWindoProps({ i, props: mergedProps })
-      },
-      onmouseleave: (ev) => {
-        ev.stopPropagation()
-        actions.setWindoProps({
-          i,
-          props: { currentActionName: undefined }
-        })
-      }
+      onmousedown: handlePointerDown({ actions, actionName, i }),
+      ontouchstart: handlePointerDown({
+        actions,
+        actionName,
+        i,
+        isTouch: true
+      }),
+      onmouseup: handlePointerUp({ actions, i }),
+      ontouchend: handlePointerUp({ actions, i }),
+      onmousemove: handlePointerMove({
+        actions,
+        coords,
+        isActive,
+        updaterFn,
+        i
+      }),
+      ontouchmove: handlePointerMove({
+        actions,
+        coords,
+        isActive,
+        updaterFn,
+        isTouch: true,
+        i
+      }),
+      onmouseleave: handlePointerUp({ actions, actionName, i })
     },
     children
   )
