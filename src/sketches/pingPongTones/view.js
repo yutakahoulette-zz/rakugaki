@@ -43,46 +43,48 @@ function segments(segmentCoords) {
   return <g>{groups}</g>
 }
 
+const handlePartial = (coords) => ({ xOffset, yOffset }) => {
+  const [x, y] = coords
+  return (
+    <rect
+      x={x - xOffset}
+      y={y - yOffset}
+      width={HANDLE_SIZE}
+      height={HANDLE_SIZE}
+    />
+  )
+}
+
 function handles(cornerCoords) {
-  const [
-    topLeftCoords,
-    topRightCoords,
-    bottomRightCoords,
-    bottomLeftCoords
-  ] = cornerCoords
-  const topLeftRect = (
-    <rect
-      x={topLeftCoords[0] - HANDLE_OFFSET}
-      y={topLeftCoords[1] - HANDLE_OFFSET}
-      width={HANDLE_SIZE}
-      height={HANDLE_SIZE}
-    />
-  )
-  const topRightRect = (
-    <rect
-      x={topRightCoords[0] - HALF_STROKE_WIDTH}
-      y={topRightCoords[1] - HANDLE_OFFSET}
-      width={HANDLE_SIZE}
-      height={HANDLE_SIZE}
-    />
-  )
-  const bottomRightRect = (
-    <rect
-      x={bottomRightCoords[0] - HALF_STROKE_WIDTH}
-      y={bottomRightCoords[1] - HALF_STROKE_WIDTH}
-      width={HANDLE_SIZE}
-      height={HANDLE_SIZE}
-    />
-  )
-  const bottomLeftRect = (
-    <rect
-      x={bottomLeftCoords[0] - HANDLE_OFFSET}
-      y={bottomLeftCoords[1] - HALF_STROKE_WIDTH}
-      width={HANDLE_SIZE}
-      height={HANDLE_SIZE}
-    />
-  )
-  const rects = [topLeftRect, topRightRect, bottomRightRect, bottomLeftRect]
+  const rects = cornerCoords.map((coords, i) => {
+    const handle = handlePartial(coords)
+    switch (i) {
+      case 0:
+        // Top left
+        return handle({
+          xOffset: HANDLE_OFFSET,
+          yOffset: HANDLE_OFFSET
+        })
+      case 1:
+        // Top right
+        return handle({
+          xOffset: HALF_STROKE_WIDTH,
+          yOffset: HANDLE_OFFSET
+        })
+      case 2:
+        // Bottom right
+        return handle({
+          xOffset: HALF_STROKE_WIDTH,
+          yOffset: HALF_STROKE_WIDTH
+        })
+      case 3:
+        // Bottom left
+        return handle({
+          xOffset: HANDLE_OFFSET,
+          yOffset: HALF_STROKE_WIDTH
+        })
+    }
+  })
   return <g>{rects}</g>
 }
 
