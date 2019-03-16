@@ -4,8 +4,7 @@ import { view } from './view'
 
 const description = `Untitled`
 
-// - draw box with 24 or 12 steps
-// - if box is less than 192px (24 * 8) than switch to 12 steps
+// - draw box with 12 steps
 // - boxes should have min size of 16px
 // - make box resizable from 4 corners
 

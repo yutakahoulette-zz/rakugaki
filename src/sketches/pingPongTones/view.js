@@ -17,22 +17,28 @@ const Wrapper = style('div')({
   display: 'flex'
 })
 
-function box(boxCoords) {
-  const lines = Object.keys(boxCoords).reduce((acc, key) => {
-    const coords = boxCoords[key]
-    if (coords) {
-      console.log({ key, coords })
+function segments(segmentCoords) {
+  const groups = segmentCoords.map((coordPairs, i) => {
+    const polylines = coordPairs.map((coords, ii) => {
       const points = coordsToPoints(coords)
-      const polyline = <polyline stroke="black" key={key} points={points} />
-      return [polyline, ...acc]
-    }
-    return acc
-  }, [])
-  return <g>{lines}</g>
+      const stroke = 'black'
+      return (
+        <polyline
+          stroke={stroke}
+          stroke-width={6}
+          stroke-linecap="square"
+          key={`${i}:${ii}`}
+          points={points}
+        />
+      )
+    })
+    return <g>{polylines}</g>
+  })
+  return <g>{groups}</g>
 }
 
 export function view(state, actions) {
-  const { boxCoords, width, height } = state
+  const { segmentCoords, width, height } = state
   const bottomOffset = (ENV.navHeight || 0) + 'px'
   const style = {
     bottom: bottomOffset
@@ -46,7 +52,7 @@ export function view(state, actions) {
         ondestroy={() => {}}
       >
         <svg width={width} height={height}>
-          {box(boxCoords)}
+          {segments(segmentCoords)}
         </svg>
       </Container>
     </Wrapper>
