@@ -1,10 +1,12 @@
-import { clamp, compose, chain, splitEvery, drop, dropLast } from 'ramda'
+import { clamp, compose, chain, splitEvery, drop, dropLast, last } from 'ramda'
+import {
+  MAX_INITIAL_SIZE,
+  MIN_INITIAL_SIZE,
+  PADDING,
+  SEGMENT_COUNT
+} from './consts'
 
-const MAX_INITIAL_SIZE = 24 * 24
-const MIN_INITIAL_SIZE = 24 * 8
-const HANDLE_SIZE = 16
-const PADDING = HANDLE_SIZE * 3
-const SEGMENT_COUNT = 12
+const first = (arr) => arr[0]
 
 export const init = (actions) => {
   const { ENV = {} } = window
@@ -46,21 +48,39 @@ export const init = (actions) => {
     [midX + midXWidth, midY + midYHeight]
   ]
 
-  const segmentCoords = [topCoords, bottomCoords, leftCoords, rightCoords]
+  const segmentCoords = [topCoords, rightCoords, leftCoords, bottomCoords]
     .map(padCoords({ height, width }))
     .map(toSegements)
     .map(toPairs)
 
+  const cornerCoords = [
+    compose(
+      first,
+      first,
+      first
+    )(segmentCoords), // Top left
+    compose(
+      last,
+      last,
+      first
+    )(segmentCoords), // Top right
+    compose(
+      last,
+      last,
+      last
+    )(segmentCoords), // Bottom right
+    compose(
+      first,
+      first,
+      last
+    )(segmentCoords) // Bottom left
+  ]
+
   actions.set({
     height,
     width,
-    segmentCoords,
-    boxCoords: {
-      top: topCoords,
-      left: leftCoords,
-      bottom: bottomCoords,
-      right: rightCoords
-    }
+    cornerCoords,
+    segmentCoords
   })
 }
 

@@ -1,4 +1,4 @@
 export const state = {
-  boxCoords: {},
-  segmentCoords: []
+  segmentCoords: [],
+  cornerCoords: [[0, 0], [0, 0], [0, 0], [0, 0]]
 }
