@@ -1,12 +1,13 @@
 {
   "scripts": {
     "dev": "parcel src/index.html -d dev --open",
-    "build": "npm run test && parcel build src/index.html -d docs --public-url ./ --experimental-scope-hoisting && open docs/index.html",
+    "build": "parcel build src/index.html -d docs --public-url ./ --experimental-scope-hoisting",
+    "test-build-open": "npm run test && npm run build && open docs/index.html",
     "test": "tape -r esm test/**/*.js"
   },
   "devDependencies": {
     "esm": "3.2.9",
-    "parcel-bundler": "1.11.0",
+    "parcel-bundler": "1.12.1",
     "tachyons": "4.11.1",
     "tape": "4.10.1"
   },

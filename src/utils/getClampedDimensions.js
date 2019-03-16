@@ -8,8 +8,9 @@ export const getClampedDimensions = ({
   offsetY = 32,
   offsetX = 32
 }) => {
-  const navHeight = (ENV && ENV.navHeight) || 0
-  const disclaimerHeight = (ENV && ENV.disclaimerHeight) || 0
+  const { ENV = {} } = window
+  const navHeight = ENV.navHeight || 0
+  const disclaimerHeight = ENV.disclaimerHeight || 0
   offsetY = offsetY + navHeight + disclaimerHeight
   maxWidth = maxWidth || maxSize
   maxHeight = maxHeight || maxSize

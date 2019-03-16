@@ -3,6 +3,7 @@ import { classNames } from '../src/utils/classNames'
 import { firstKeyVal } from '../src/utils/firstKeyVal'
 import { gainToDb } from '../src/utils/gainToDb'
 import { get2dCoords } from '../src/utils/get2dCoords'
+import { getElmFrom2dArray } from '../src/utils/getElmFrom2dArray'
 
 test('classNames', (t) => {
   const expected = 'red block outline'
@@ -38,5 +39,14 @@ test('gainToDb', (t) => {
 test('get2dCoords', (t) => {
   t.deepEqual(get2dCoords(4, 5), { x: 4, y: 0 })
   t.deepEqual(get2dCoords(5, 4), { x: 1, y: 1 })
+  t.end()
+})
+
+test('getElmFrom2dArray', (t) => {
+  const matrix = [[1, 2, 3], [4, 5, 6]]
+  t.equal(getElmFrom2dArray({ x: 0, y: 0 }, matrix), 1)
+  t.equal(getElmFrom2dArray({ x: 2, y: 0 }, matrix), 3)
+  t.equal(getElmFrom2dArray({ x: 0, y: 1 }, matrix), 4)
+  t.equal(getElmFrom2dArray({ x: 2, y: 1 }, matrix), 6)
   t.end()
 })
