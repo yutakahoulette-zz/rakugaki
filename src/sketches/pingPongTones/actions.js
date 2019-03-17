@@ -1,3 +1,5 @@
+import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
+
 export const actions = {
   set: (obj) => () => obj,
   handleResize: (resizerNewCoords) => ({
@@ -7,24 +9,30 @@ export const actions = {
   }) => {
     const xDiff = resizerNewCoords[0] - resizerOldCoords[0]
     const yDiff = resizerNewCoords[1] - resizerOldCoords[1]
+
     const [topLeft, topRight, bottomRight, bottomLeft] = cornerCoords
-    let newCornerCoords
+    const [topLeftX, topLeftY] = topLeft
+    const [topRightX, topRightY] = topRight
+    const [bottomRightX, bottomRightY] = bottomRight
+    const [bottomLeftX, bottomLeftY] = bottomLeft
+
+    let newCornerCoords = []
     switch (resizerIndex) {
       case 0:
         // Top left
         newCornerCoords = [
-          [topLeft[0] + xDiff, topLeft[1] + yDiff],
-          [topRight[0], topRight[1] + yDiff],
+          [topLeftX + xDiff, topLeftY + yDiff],
+          [topRightX, topRightY + yDiff],
           bottomRight,
-          [bottomLeft[0] + xDiff, bottomLeft[1]]
+          [bottomLeftX + xDiff, bottomLeftY]
         ]
         break
       case 1:
         // Top right
         newCornerCoords = [
-          [topLeft[0], topLeft[1] + yDiff],
-          [topRight[0] + xDiff, topRight[1] + yDiff],
-          [bottomRight[0] + xDiff, bottomRight[1]],
+          [topLeftX, topLeftY + yDiff],
+          [topRightX + xDiff, topRightY + yDiff],
+          [bottomRightX + xDiff, bottomRight[1]],
           bottomLeft
         ]
         break
@@ -32,22 +40,23 @@ export const actions = {
         // Bottom right
         newCornerCoords = [
           topLeft,
-          [topRight[0] + xDiff, topRight[1]],
-          [bottomRight[0] + xDiff, bottomRight[1] + yDiff],
-          [bottomLeft[0], bottomLeft[1] + yDiff]
+          [topRightX + xDiff, topRightY],
+          [bottomRightX + xDiff, bottomRightY + yDiff],
+          [bottomLeftX, bottomLeftY + yDiff]
         ]
         break
       case 3:
         // Bottom left
         newCornerCoords = [
-          [topLeft[0] + xDiff, topLeft[1]],
+          [topLeftX + xDiff, topLeftY],
           topRight,
-          [bottomRight[0], bottomRight[1] + yDiff],
-          [bottomLeft[0] + xDiff, bottomLeft[1] + yDiff]
+          [bottomRightX, bottomRightY + yDiff],
+          [bottomLeftX + xDiff, bottomLeftY + yDiff]
         ]
     }
     return {
       resizerOldCoords: resizerNewCoords,
+      segmentCoords: cornerCoordsToSegmentCoords(newCornerCoords),
       cornerCoords: newCornerCoords
     }
   }

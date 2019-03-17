@@ -49,9 +49,9 @@ const handlePartial = ({ actions, state, coords, i }) => ({
   yOffset
 }) => {
   const [x, y] = coords
-  const { resizerOldCoords } = state
   return (
     <rect
+      class="pointer"
       x={x - xOffset}
       y={y - yOffset}
       onmousedown={(ev) => {
@@ -118,8 +118,16 @@ export function view(state, actions) {
         <svg
           width={width}
           height={height}
+          onmouseleave={(ev) => {
+            ev.preventDefault()
+            document.body.style.cursor = 'default'
+            actions.set({
+              resizerOldCoords: undefined
+            })
+          }}
           onmouseup={(ev) => {
             ev.preventDefault()
+            document.body.style.cursor = 'default'
             actions.set({
               resizerOldCoords: undefined
             })
@@ -129,6 +137,7 @@ export function view(state, actions) {
             if (resizerOldCoords === undefined) {
               return
             }
+            document.body.style.cursor = 'pointer'
             actions.handleResize(getClientXY(ev))
           }}
         >
