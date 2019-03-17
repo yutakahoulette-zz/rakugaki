@@ -235,7 +235,7 @@ const TopRightResizer = ({ updater, ElasticElm }) => {
   )
 }
 
-export const resizers = ({ updater, ElasticElm }) => {
+export function resizers({ updater, ElasticElm }) {
   return [
     TopRightResizer,
     RightResizer,

@@ -1,16 +1,10 @@
 import { COLORS_LEN } from './consts'
-
-const getXY = (ev, isTouch = false) => {
-  if (isTouch) {
-    return [ev.touches[0].clientX, ev.touches[0].clientY]
-  }
-  return [ev.clientX, ev.clientY]
-}
+import { getClientXY } from '../../utils/getClientXY'
 
 const handlePointerDown = ({ actions, i, actionName, isTouch }) => (ev) => {
   ev.stopPropagation()
   ev.preventDefault()
-  const [x, y] = getXY(ev, isTouch)
+  const [x, y] = getClientXY(ev, isTouch)
   actions.updateZIndex({ i })
   actions.setWindoProps({
     i,
@@ -40,7 +34,7 @@ const handlePointerMove = ({
   if (!isActive || !coords) {
     return
   }
-  const [x, y] = getXY(ev, isTouch)
+  const [x, y] = getClientXY(ev, isTouch)
   const xDifference = x - coords.x
   const yDifference = y - coords.y
   const props = {

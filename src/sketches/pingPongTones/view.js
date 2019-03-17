@@ -8,6 +8,7 @@ import {
   HANDLE_OFFSET,
   HANDLE_SIZE
 } from './consts'
+import { getClientXY } from '../../utils/getClientXY'
 
 const style = picostyle(h)
 
@@ -43,21 +44,33 @@ function segments(segmentCoords) {
   return <g>{groups}</g>
 }
 
-const handlePartial = (coords) => ({ xOffset, yOffset }) => {
+const handlePartial = ({ actions, state, coords, i }) => ({
+  xOffset,
+  yOffset
+}) => {
   const [x, y] = coords
+  const { resizerOldCoords } = state
   return (
     <rect
       x={x - xOffset}
       y={y - yOffset}
+      onmousedown={(ev) => {
+        ev.preventDefault()
+        actions.set({
+          resizerOldCoords: getClientXY(ev),
+          resizerIndex: i
+        })
+      }}
       width={HANDLE_SIZE}
       height={HANDLE_SIZE}
     />
   )
 }
 
-function handles(cornerCoords) {
+function handles({ actions, state }) {
+  const { cornerCoords } = state
   const rects = cornerCoords.map((coords, i) => {
-    const handle = handlePartial(coords)
+    const handle = handlePartial({ actions, state, coords, i })
     switch (i) {
       case 0:
         // Top left
@@ -89,7 +102,7 @@ function handles(cornerCoords) {
 }
 
 export function view(state, actions) {
-  const { segmentCoords, cornerCoords, width, height } = state
+  const { segmentCoords, resizerOldCoords, width, height } = state
   const bottomOffset = (ENV.navHeight || 0) + 'px'
   const style = {
     bottom: bottomOffset
@@ -102,9 +115,25 @@ export function view(state, actions) {
         }}
         ondestroy={() => {}}
       >
-        <svg width={width} height={height}>
+        <svg
+          width={width}
+          height={height}
+          onmouseup={(ev) => {
+            ev.preventDefault()
+            actions.set({
+              resizerOldCoords: undefined
+            })
+          }}
+          onmousemove={(ev) => {
+            ev.preventDefault()
+            if (resizerOldCoords === undefined) {
+              return
+            }
+            actions.handleResize(getClientXY(ev))
+          }}
+        >
           {segments(segmentCoords)}
-          {handles(cornerCoords)}
+          {handles({ actions, state })}
         </svg>
       </Container>
     </Wrapper>
