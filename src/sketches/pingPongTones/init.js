@@ -4,7 +4,8 @@ import {
   MAX_INITIAL_SIZE,
   MIN_INITIAL_SIZE,
   PADDING,
-  INITIAL_BALL_PADDING
+  INITIAL_BALL_PADDING,
+  BALL_COUNT
 } from './consts'
 import { randomNum } from '../../utils/randomNum'
 import { raf } from '../../utils/raf'
@@ -41,7 +42,7 @@ export const init = (actions) => {
     bottomLeftCoords
   ]
   const segmentCoords = cornerCoordsToSegmentCoords(cornerCoords)
-  const ballCoords = new Array(3).fill().map(() => {
+  const ballCoords = new Array(BALL_COUNT).fill().map(() => {
     const x = randomNum(
       topLeftCoords[0] + INITIAL_BALL_PADDING,
       topRightCoords[0] - INITIAL_BALL_PADDING
@@ -52,12 +53,18 @@ export const init = (actions) => {
     )
     return [x, y]
   })
+  const ballSpeeds = new Array(BALL_COUNT).fill().map(() => {
+    const x = 1 + Math.random() * 2
+    const y = 1 + Math.random() * 2
+    return [x, y]
+  })
   actions.set({
+    ballSpeeds,
     ballCoords,
     svgHeight: height,
     svgWidth: width,
     cornerCoords,
     segmentCoords
   })
-  // raf(actions.updateBalls)
+  window.setInterval(actions.updateBalls, 8)
 }

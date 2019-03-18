@@ -116,16 +116,49 @@ export const actions = {
     }
   },
   updateBalls: () => (state) => {
-    const { ballCoords, cornerCoords } = state
-    const [topLeft, topRight, bottomRight, bottomLeft] = cornerCoords
-    const [right, top] = topRight
-    const [left, bottom] = bottomLeft
-    const newBallCoords = ballCoords.map(([x, y], i) => {
-      const xPadded = x - BALL_RADIUS
-      let xInc = xPadded >= right ? 1 : -1
-      xInc = xPadded <= left ? 1 : -1
-      return [x + xInc, y + 1]
+    const { ballCoords, ballSpeeds, cornerCoords } = state
+    const [, topRight, , bottomLeft] = cornerCoords
+    let [right, top] = topRight
+    let [left, bottom] = bottomLeft
+    right = right - BALL_RADIUS
+    top = top + BALL_RADIUS
+    left = left + BALL_RADIUS
+    bottom = bottom - BALL_RADIUS
+    const newBallSpeeds = ballSpeeds.map(([xSpeed, ySpeed], i) => {
+      const [x, y] = ballCoords[i]
+      if (x >= right || x <= left) {
+        xSpeed = xSpeed * -1
+      }
+      if (y <= top || y >= bottom) {
+        ySpeed = ySpeed * -1
+      }
+      return [xSpeed, ySpeed]
     })
-    return { ballCoords: newBallCoords }
+    const newBallCoords = ballCoords.map(([x, y], i) => {
+      const [xSpeed, ySpeed] = newBallSpeeds[i]
+      if (x >= right || x <= left) {
+        if (x >= right) {
+          x = right - 1
+        }
+        if (x <= left) {
+          x = left + 1
+        }
+      } else {
+        x = x + xSpeed
+      }
+
+      if (y >= bottom || y <= top) {
+        if (y >= bottom) {
+          y = bottom - 1
+        }
+        if (y <= top) {
+          y = top + 1
+        }
+      } else {
+        y = y + ySpeed
+      }
+      return [x, y]
+    })
+    return { ballCoords: newBallCoords, ballSpeeds: newBallSpeeds }
   }
 }
