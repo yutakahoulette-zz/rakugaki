@@ -1,4 +1,4 @@
-import { MIN_SIZE, BOX_OFFSET } from './consts'
+import { MIN_SIZE, BALL_RADIUS } from './consts'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 
 export const actions = {
@@ -114,5 +114,18 @@ export const actions = {
       segmentCoords: cornerCoordsToSegmentCoords(newCornerCoords),
       cornerCoords: newCornerCoords
     }
+  },
+  updateBalls: () => (state) => {
+    const { ballCoords, cornerCoords } = state
+    const [topLeft, topRight, bottomRight, bottomLeft] = cornerCoords
+    const [right, top] = topRight
+    const [left, bottom] = bottomLeft
+    const newBallCoords = ballCoords.map(([x, y], i) => {
+      const xPadded = x - BALL_RADIUS
+      let xInc = xPadded >= right ? 1 : -1
+      xInc = xPadded <= left ? 1 : -1
+      return [x + xInc, y + 1]
+    })
+    return { ballCoords: newBallCoords }
   }
 }

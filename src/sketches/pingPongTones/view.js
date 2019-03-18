@@ -2,14 +2,8 @@ import { h } from 'hyperapp'
 import picostyle from 'picostyle'
 import { init } from './init'
 import { coordsToPoints } from '../../utils/coordsToPoints'
-import {
-  STROKE_WIDTH,
-  HALF_STROKE_WIDTH,
-  HANDLE_OFFSET,
-  HANDLE_SIZE,
-  MIN_SIZE,
-  BOX_OFFSET
-} from './consts'
+import { STROKE_WIDTH, HANDLE_OFFSET, BALL_RADIUS, COLORS } from './consts'
+
 import { getClientXY } from '../../utils/getClientXY'
 
 const style = picostyle(h)
@@ -47,12 +41,15 @@ function segments(segmentCoords) {
 }
 
 const handlePartial = ({ actions, state, coords, i }) => ({
-  xOffset,
-  yOffset
+  xOffset = 0,
+  yOffset = 0
 }) => {
   const [x, y] = coords
   return (
     <rect
+      fill="white"
+      stroke-width={STROKE_WIDTH}
+      stroke="black"
       class="pointer"
       x={x - xOffset}
       y={y - yOffset}
@@ -63,8 +60,8 @@ const handlePartial = ({ actions, state, coords, i }) => ({
           resizerIndex: i
         })
       }}
-      width={HANDLE_SIZE}
-      height={HANDLE_SIZE}
+      width={HANDLE_OFFSET}
+      height={HANDLE_OFFSET}
     />
   )
 }
@@ -83,34 +80,30 @@ function handles({ actions, state }) {
       case 1:
         // Top right
         return handle({
-          xOffset: HALF_STROKE_WIDTH,
           yOffset: HANDLE_OFFSET
         })
       case 2:
         // Bottom right
-        return handle({
-          xOffset: HALF_STROKE_WIDTH,
-          yOffset: HALF_STROKE_WIDTH
-        })
+        return handle({})
       case 3:
         // Bottom left
         return handle({
-          xOffset: HANDLE_OFFSET,
-          yOffset: HALF_STROKE_WIDTH
+          xOffset: HANDLE_OFFSET
         })
     }
   })
   return <g>{rects}</g>
 }
 
+function balls({ state, actions }) {
+  const { ballCoords } = state
+  return ballCoords.map(([x, y], i) => (
+    <circle fill={COLORS[i]} cx={x} cy={y} r={BALL_RADIUS} />
+  ))
+}
+
 export function view(state, actions) {
-  const {
-    segmentCoords,
-    resizerOldCoords,
-    resizerIndex,
-    svgWidth,
-    svgHeight
-  } = state
+  const { segmentCoords, resizerOldCoords, svgWidth, svgHeight } = state
   const bottomOffset = (ENV.navHeight || 0) + 'px'
   const style = {
     bottom: bottomOffset
@@ -148,6 +141,7 @@ export function view(state, actions) {
         >
           {segments(segmentCoords)}
           {handles({ actions, state })}
+          {balls({ actions, state })}
         </svg>
       </Container>
     </Wrapper>

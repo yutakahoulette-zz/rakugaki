@@ -1,6 +1,13 @@
 import { clamp } from 'ramda'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
-import { MAX_INITIAL_SIZE, MIN_INITIAL_SIZE, PADDING } from './consts'
+import {
+  MAX_INITIAL_SIZE,
+  MIN_INITIAL_SIZE,
+  PADDING,
+  INITIAL_BALL_PADDING
+} from './consts'
+import { randomNum } from '../../utils/randomNum'
+import { raf } from '../../utils/raf'
 
 export const init = (actions) => {
   const { ENV = {} } = window
@@ -34,10 +41,23 @@ export const init = (actions) => {
     bottomLeftCoords
   ]
   const segmentCoords = cornerCoordsToSegmentCoords(cornerCoords)
+  const ballCoords = new Array(3).fill().map(() => {
+    const x = randomNum(
+      topLeftCoords[0] + INITIAL_BALL_PADDING,
+      topRightCoords[0] - INITIAL_BALL_PADDING
+    )
+    const y = randomNum(
+      topLeftCoords[1] + INITIAL_BALL_PADDING,
+      bottomLeftCoords[1] - INITIAL_BALL_PADDING
+    )
+    return [x, y]
+  })
   actions.set({
+    ballCoords,
     svgHeight: height,
     svgWidth: width,
     cornerCoords,
     segmentCoords
   })
+  // raf(actions.updateBalls)
 }
