@@ -35,8 +35,8 @@ export const init = (actions) => {
   ]
   const segmentCoords = cornerCoordsToSegmentCoords(cornerCoords)
   actions.set({
-    height,
-    width,
+    svgHeight: height,
+    svgWidth: width,
     cornerCoords,
     segmentCoords
   })

@@ -1,3 +1,4 @@
+import { MIN_SIZE, BOX_OFFSET } from './consts'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 
 export const actions = {
@@ -7,8 +8,10 @@ export const actions = {
     resizerIndex,
     cornerCoords
   }) => {
-    const xDiff = resizerNewCoords[0] - resizerOldCoords[0]
-    const yDiff = resizerNewCoords[1] - resizerOldCoords[1]
+    const [resizerNewCoordsX, resizerNewCoordsY] = resizerNewCoords
+    const [resizerOldCoordsX, resizerOldCoordsY] = resizerOldCoords
+    let xDiff = resizerNewCoordsX - resizerOldCoordsX
+    let yDiff = resizerNewCoordsY - resizerOldCoordsY
 
     const [topLeft, topRight, bottomRight, bottomLeft] = cornerCoords
     const [topLeftX, topLeftY] = topLeft
@@ -16,10 +19,26 @@ export const actions = {
     const [bottomRightX, bottomRightY] = bottomRight
     const [bottomLeftX, bottomLeftY] = bottomLeft
 
-    let newCornerCoords = []
+    const boxWidth = topRightX - topLeftX
+    const boxHeight = bottomRightY - topRight[1]
+    let newCornerCoords
+    let isExpandingX
+    let isExpandingY
     switch (resizerIndex) {
       case 0:
         // Top left
+        isExpandingX = xDiff <= 0
+        isExpandingY = yDiff <= 0
+        if (!isExpandingX) {
+          if (boxWidth - xDiff <= MIN_SIZE) {
+            xDiff = 0
+          }
+        }
+        if (!isExpandingY) {
+          if (boxHeight - yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        }
         newCornerCoords = [
           [topLeftX + xDiff, topLeftY + yDiff],
           [topRightX, topRightY + yDiff],
@@ -29,6 +48,18 @@ export const actions = {
         break
       case 1:
         // Top right
+        isExpandingX = xDiff >= 0
+        isExpandingY = yDiff <= 0
+        if (!isExpandingX) {
+          if (boxWidth + xDiff <= MIN_SIZE) {
+            xDiff = 0
+          }
+        }
+        if (!isExpandingY) {
+          if (boxHeight - yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        }
         newCornerCoords = [
           [topLeftX, topLeftY + yDiff],
           [topRightX + xDiff, topRightY + yDiff],
@@ -38,6 +69,18 @@ export const actions = {
         break
       case 2:
         // Bottom right
+        isExpandingX = xDiff >= 0
+        isExpandingY = yDiff >= 0
+        if (!isExpandingX) {
+          if (boxWidth + xDiff <= MIN_SIZE) {
+            xDiff = 0
+          }
+        }
+        if (!isExpandingY) {
+          if (boxHeight + yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        }
         newCornerCoords = [
           topLeft,
           [topRightX + xDiff, topRightY],
@@ -47,6 +90,18 @@ export const actions = {
         break
       case 3:
         // Bottom left
+        isExpandingX = xDiff <= 0
+        isExpandingY = yDiff >= 0
+        if (!isExpandingX) {
+          if (boxWidth - xDiff <= MIN_SIZE) {
+            xDiff = 0
+          }
+        }
+        if (!isExpandingY) {
+          if (boxHeight + yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        }
         newCornerCoords = [
           [topLeftX + xDiff, topLeftY],
           topRight,

@@ -6,7 +6,9 @@ import {
   STROKE_WIDTH,
   HALF_STROKE_WIDTH,
   HANDLE_OFFSET,
-  HANDLE_SIZE
+  HANDLE_SIZE,
+  MIN_SIZE,
+  BOX_OFFSET
 } from './consts'
 import { getClientXY } from '../../utils/getClientXY'
 
@@ -102,7 +104,13 @@ function handles({ actions, state }) {
 }
 
 export function view(state, actions) {
-  const { segmentCoords, resizerOldCoords, width, height } = state
+  const {
+    segmentCoords,
+    resizerOldCoords,
+    resizerIndex,
+    svgWidth,
+    svgHeight
+  } = state
   const bottomOffset = (ENV.navHeight || 0) + 'px'
   const style = {
     bottom: bottomOffset
@@ -116,18 +124,16 @@ export function view(state, actions) {
         ondestroy={() => {}}
       >
         <svg
-          width={width}
-          height={height}
+          width={svgWidth}
+          height={svgHeight}
           onmouseleave={(ev) => {
             ev.preventDefault()
-            document.body.style.cursor = 'default'
             actions.set({
               resizerOldCoords: undefined
             })
           }}
           onmouseup={(ev) => {
             ev.preventDefault()
-            document.body.style.cursor = 'default'
             actions.set({
               resizerOldCoords: undefined
             })
@@ -137,7 +143,6 @@ export function view(state, actions) {
             if (resizerOldCoords === undefined) {
               return
             }
-            document.body.style.cursor = 'pointer'
             actions.handleResize(getClientXY(ev))
           }}
         >
