@@ -1,5 +1,7 @@
-import { MIN_SIZE, BALL_RADIUS } from './consts'
+import { MIN_SIZE } from './consts'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
+import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
+import { percentInRange } from '../../utils/percentInRange'
 
 export const actions = {
   set: (obj) => () => obj,
@@ -109,50 +111,59 @@ export const actions = {
           [bottomLeftX + xDiff, bottomLeftY + yDiff]
         ]
     }
+    const boxSizeAndOffsets = getBoxSizeAndOffsets(newCornerCoords)
     return {
+      ...boxSizeAndOffsets,
       resizerOldCoords: resizerNewCoords,
       segmentCoords: cornerCoordsToSegmentCoords(newCornerCoords),
       cornerCoords: newCornerCoords
     }
   },
   updateBalls: () => (state) => {
-    const { ballCoords, ballSpeeds, cornerCoords } = state
-    const [, topRight, , bottomLeft] = cornerCoords
-    let [right, top] = topRight
-    let [left, bottom] = bottomLeft
-    right = right - BALL_RADIUS
-    top = top + BALL_RADIUS
-    left = left + BALL_RADIUS
-    bottom = bottom - BALL_RADIUS
+    const {
+      ballCoords,
+      ballSpeeds,
+      right,
+      left,
+      top,
+      bottom,
+      rightOffset,
+      topOffset,
+      leftOffset,
+      bottomOffset
+    } = state
+
     const newBallSpeeds = ballSpeeds.map(([xSpeed, ySpeed], i) => {
       const [x, y] = ballCoords[i]
-      if (x >= right || x <= left) {
+      if (x >= rightOffset || x <= leftOffset) {
+        console.log(findNoteIndex(y, top, bottom))
         xSpeed = xSpeed * -1
       }
-      if (y <= top || y >= bottom) {
+      if (y <= topOffset || y >= bottomOffset) {
+        console.log(findNoteIndex(x, left, right))
         ySpeed = ySpeed * -1
       }
       return [xSpeed, ySpeed]
     })
     const newBallCoords = ballCoords.map(([x, y], i) => {
       const [xSpeed, ySpeed] = newBallSpeeds[i]
-      if (x >= right || x <= left) {
-        if (x >= right) {
-          x = right - 1
+      if (x >= rightOffset || x <= leftOffset) {
+        if (x >= rightOffset) {
+          x = rightOffset - 1
         }
-        if (x <= left) {
-          x = left + 1
+        if (x <= leftOffset) {
+          x = leftOffset + 1
         }
       } else {
         x = x + xSpeed
       }
 
-      if (y >= bottom || y <= top) {
-        if (y >= bottom) {
-          y = bottom - 1
+      if (y >= bottomOffset || y <= topOffset) {
+        if (y >= bottomOffset) {
+          y = bottomOffset - 1
         }
-        if (y <= top) {
-          y = top + 1
+        if (y <= topOffset) {
+          y = topOffset + 1
         }
       } else {
         y = y + ySpeed
@@ -161,4 +172,8 @@ export const actions = {
     })
     return { ballCoords: newBallCoords, ballSpeeds: newBallSpeeds }
   }
+}
+
+function findNoteIndex(n, min, max) {
+  return Math.floor(percentInRange(n, min, max) * 12)
 }

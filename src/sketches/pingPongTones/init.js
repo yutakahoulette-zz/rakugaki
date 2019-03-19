@@ -1,5 +1,6 @@
 import { clamp } from 'ramda'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
+import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import {
   MAX_INITIAL_SIZE,
   MIN_INITIAL_SIZE,
@@ -54,11 +55,13 @@ export const init = (actions) => {
     return [x, y]
   })
   const ballSpeeds = new Array(BALL_COUNT).fill().map(() => {
-    const x = 1 + Math.random() * 2
-    const y = 1 + Math.random() * 2
+    const x = 1 + Math.random() * 3
+    const y = 1 + Math.random() * 3
     return [x, y]
   })
+  const boxSizeAndOffsets = getBoxSizeAndOffsets(cornerCoords)
   actions.set({
+    ...boxSizeAndOffsets,
     ballSpeeds,
     ballCoords,
     svgHeight: height,
@@ -66,5 +69,5 @@ export const init = (actions) => {
     cornerCoords,
     segmentCoords
   })
-  window.setInterval(actions.updateBalls, 8)
+  raf(actions.updateBalls)
 }

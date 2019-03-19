@@ -139,9 +139,9 @@ export function view(state, actions) {
             actions.handleResize(getClientXY(ev))
           }}
         >
+          {balls({ actions, state })}
           {segments(segmentCoords)}
           {handles({ actions, state })}
-          {balls({ actions, state })}
         </svg>
       </Container>
     </Wrapper>
