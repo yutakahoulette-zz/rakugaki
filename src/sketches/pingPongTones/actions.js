@@ -123,6 +123,7 @@ export const actions = {
     const {
       ballCoords,
       ballSpeeds,
+      ballNotes,
       right,
       left,
       top,
@@ -133,18 +134,38 @@ export const actions = {
       bottomOffset
     } = state
 
+    const updateBallNotes = (i, ii, val) => {
+      ballNotes[`${i}-${ii}`] = val
+      // Hack to reset segment color
+      window.setTimeout(() => {
+        ballNotes[`${i}-${ii}`] = undefined
+      }, 200)
+    }
+    // Mutates ballNotes
     const newBallSpeeds = ballSpeeds.map(([xSpeed, ySpeed], i) => {
       const [x, y] = ballCoords[i]
+      let noteIndex
       if (x >= rightOffset || x <= leftOffset) {
-        console.log(findNoteIndex(y, top, bottom))
+        noteIndex = findNoteIndex(y, top, bottom)
         xSpeed = xSpeed * -1
+        if (x >= rightOffset) {
+          updateBallNotes(1, noteIndex, i)
+        } else {
+          updateBallNotes(3, noteIndex, i)
+        }
       }
       if (y <= topOffset || y >= bottomOffset) {
-        console.log(findNoteIndex(x, left, right))
+        noteIndex = findNoteIndex(x, left, right)
         ySpeed = ySpeed * -1
+        if (y <= topOffset) {
+          updateBallNotes(0, noteIndex, i)
+        } else {
+          updateBallNotes(2, noteIndex, i)
+        }
       }
       return [xSpeed, ySpeed]
     })
+
     const newBallCoords = ballCoords.map(([x, y], i) => {
       const [xSpeed, ySpeed] = newBallSpeeds[i]
       if (x >= rightOffset || x <= leftOffset) {

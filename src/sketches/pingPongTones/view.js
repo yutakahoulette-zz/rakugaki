@@ -5,6 +5,7 @@ import { coordsToPoints } from '../../utils/coordsToPoints'
 import { STROKE_WIDTH, HANDLE_OFFSET, BALL_RADIUS, COLORS } from './consts'
 
 import { getClientXY } from '../../utils/getClientXY'
+import { transitionString } from '../../utils/transitionString'
 
 const style = picostyle(h)
 
@@ -17,16 +18,49 @@ const Wrapper = style('div')({
   top: '0',
   left: '0',
   right: '0',
-  display: 'flex'
+  display: 'flex',
+  '& polyline': {
+    transition: transitionString({
+      props: ['stroke', 'transform'],
+      ms: 200,
+      ease: 'ease-out'
+    })
+  }
 })
 
-function segments(segmentCoords) {
+function segments({ segmentCoords, ballNotes }) {
   const groups = segmentCoords.map((coordPairs, i) => {
     const polylines = coordPairs.map((coords, ii) => {
+      const key = `${i}-${ii}`
+      const val = ballNotes[key]
+      let stroke = 'black'
+      let style = {}
+      if (val !== undefined) {
+        stroke = COLORS[val]
+        let transform
+        switch (i) {
+          default:
+          case 0:
+            transform = 'translateY(-2px)'
+            break
+          case 1:
+            transform = 'translateX(2px)'
+            break
+          case 2:
+            transform = 'translateY(2px)'
+            break
+          case 3:
+            transform = 'translateX(-2px)'
+            break
+        }
+        style = {
+          transform
+        }
+      }
       const points = coordsToPoints(coords)
-      const stroke = 'black'
       return (
         <polyline
+          style={style}
           stroke={stroke}
           stroke-width={STROKE_WIDTH}
           stroke-linecap="square"
@@ -140,7 +174,7 @@ export function view(state, actions) {
           }}
         >
           {balls({ actions, state })}
-          {segments(segmentCoords)}
+          {segments(state)}
           {handles({ actions, state })}
         </svg>
       </Container>

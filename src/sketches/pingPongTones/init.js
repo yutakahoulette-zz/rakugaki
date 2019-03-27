@@ -55,8 +55,8 @@ export const init = (actions) => {
     return [x, y]
   })
   const ballSpeeds = new Array(BALL_COUNT).fill().map(() => {
-    const x = 1 + Math.random() * 3
-    const y = 1 + Math.random() * 3
+    const x = 2 + Math.random() * 4
+    const y = 2 + Math.random() * 4
     return [x, y]
   })
   const boxSizeAndOffsets = getBoxSizeAndOffsets(cornerCoords)
