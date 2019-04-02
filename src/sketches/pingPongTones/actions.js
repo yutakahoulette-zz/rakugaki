@@ -1,4 +1,4 @@
-import { MIN_SIZE } from './consts'
+import { MIN_SIZE, SEGMENT_COUNT, SCALES } from './consts'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import { percentInRange } from '../../utils/percentInRange'
@@ -119,11 +119,12 @@ export const actions = {
       cornerCoords: newCornerCoords
     }
   },
-  updateBalls: () => (state) => {
+  updateBalls: () => (state, actions) => {
     const {
       ballCoords,
       ballSpeeds,
-      ballNotes,
+      ballCollisions,
+      ballSynths,
       right,
       left,
       top,
@@ -134,14 +135,20 @@ export const actions = {
       bottomOffset
     } = state
 
-    const updateBallNotes = (i, ii, val) => {
-      ballNotes[`${i}-${ii}`] = val
-      // Hack to reset segment color
+    const updateBallCollisions = (i, ii, val) => {
+      ballCollisions[`${i}-${ii}`] = val
+      const synth = ballSynths[val]
+      const note = SCALES.IONIAN[ii] + '4'
+      synth.triggerAttackRelease(note, 200)
       window.setTimeout(() => {
-        ballNotes[`${i}-${ii}`] = undefined
+        ballCollisions[`${i}-${ii}`] = undefined
+        actions.set({
+          ballCollisions
+        })
       }, 200)
     }
-    // Mutates ballNotes
+
+    // Mutates ballCollisions
     const newBallSpeeds = ballSpeeds.map(([xSpeed, ySpeed], i) => {
       const [x, y] = ballCoords[i]
       let noteIndex
@@ -149,18 +156,18 @@ export const actions = {
         noteIndex = findNoteIndex(y, top, bottom)
         xSpeed = xSpeed * -1
         if (x >= rightOffset) {
-          updateBallNotes(1, noteIndex, i)
+          updateBallCollisions(1, noteIndex, i)
         } else {
-          updateBallNotes(3, noteIndex, i)
+          updateBallCollisions(3, noteIndex, i)
         }
       }
       if (y <= topOffset || y >= bottomOffset) {
         noteIndex = findNoteIndex(x, left, right)
         ySpeed = ySpeed * -1
         if (y <= topOffset) {
-          updateBallNotes(0, noteIndex, i)
+          updateBallCollisions(0, noteIndex, i)
         } else {
-          updateBallNotes(2, noteIndex, i)
+          updateBallCollisions(2, noteIndex, i)
         }
       }
       return [xSpeed, ySpeed]
@@ -191,10 +198,15 @@ export const actions = {
       }
       return [x, y]
     })
-    return { ballCoords: newBallCoords, ballSpeeds: newBallSpeeds }
+
+    return {
+      ballCoords: newBallCoords,
+      ballCollisions,
+      ballSpeeds: newBallSpeeds
+    }
   }
 }
 
 function findNoteIndex(n, min, max) {
-  return Math.floor(percentInRange(n, min, max) * 12)
+  return Math.floor(percentInRange(n, min, max) * SEGMENT_COUNT)
 }

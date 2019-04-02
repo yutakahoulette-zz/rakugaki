@@ -1,4 +1,5 @@
 import { clamp } from 'ramda'
+import { Synth } from 'tone'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import {
@@ -59,11 +60,20 @@ export const init = (actions) => {
     const y = 2 + Math.random() * 4
     return [x, y]
   })
+
+  const ballSynths = new Array(BALL_COUNT).fill().map(() => {
+    const synth = new Synth({
+      oscillator: { type: 'triangle' }
+    }).toMaster()
+    return synth
+  })
+
   const boxSizeAndOffsets = getBoxSizeAndOffsets(cornerCoords)
   actions.set({
     ...boxSizeAndOffsets,
     ballSpeeds,
     ballCoords,
+    ballSynths,
     svgHeight: height,
     svgWidth: width,
     cornerCoords,

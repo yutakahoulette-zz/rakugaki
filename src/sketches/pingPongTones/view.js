@@ -28,11 +28,11 @@ const Wrapper = style('div')({
   }
 })
 
-function segments({ segmentCoords, ballNotes }) {
+function segments({ segmentCoords, ballCollisions }) {
   const groups = segmentCoords.map((coordPairs, i) => {
     const polylines = coordPairs.map((coords, ii) => {
       const key = `${i}-${ii}`
-      const val = ballNotes[key]
+      const val = ballCollisions[key]
       let stroke = 'black'
       let style = {}
       if (val !== undefined) {
