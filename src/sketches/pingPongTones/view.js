@@ -73,7 +73,7 @@ function segments({ segmentCoords, ballsCollisions }) {
   return <g>{groups}</g>
 }
 
-const handlePartial = ({ actions, state, coords, i }) => ({
+const handlePartial = ({ actions, coords, i }) => ({
   xOffset = 0,
   yOffset = 0
 }) => {

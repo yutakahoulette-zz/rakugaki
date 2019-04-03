@@ -1,10 +1,11 @@
 import { clamp } from 'ramda'
-import { Synth, Freeverb } from 'tone'
+import { Synth, JCReverb, FeedbackDelay, Chorus } from 'tone'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import {
   MIN_RELEASE,
   MAX_RELEASE,
+  MAX_RELEASE_SECONDS,
   MAX_SPEED,
   MAX_INITIAL_SIZE,
   MIN_INITIAL_SIZE,
@@ -14,6 +15,7 @@ import {
 } from './consts'
 import { randomNum } from '../../utils/randomNum'
 import { randomElm } from '../../utils/randomElm'
+import { gainToDb } from '../../utils/gainToDb'
 import { raf } from '../../utils/raf'
 
 export const init = (actions) => {
@@ -59,20 +61,79 @@ export const init = (actions) => {
       topLeftCoords[1] + INITIAL_BALL_PADDING,
       bottomLeftCoords[1] - INITIAL_BALL_PADDING
     )
-    const reverb = new Freeverb().toMaster()
-    const dampening = 1000
-    reverb.dampening.value = dampening
-    const wave = randomElm(['triangle', 'square', 'sine'])
+
+    // Reverb
+    const reverb = new JCReverb().toMaster()
+    const reverbRoomSize = 0.1
+    const reverbWet = 0.1
+    reverb.roomSize.value = reverbRoomSize
+    reverb.wet.value = reverbWet
+
+    // Chorus
+    const chorus = new Chorus()
+    const chorusDelayTime = 20
+    const chorusDepth = 0.1
+    const chorusWet = 1
+    chorus.delayTime = chorusDelayTime
+    chorus.depth = chorusDepth
+    chorus.wet.value = chorusWet
+
+    // Delay
+    const delay = new FeedbackDelay()
+    const delayTime = Math.random()
+    const delayFeedback = Math.random()
+    const delayWet = 0.1
+    delay.delayTime.value = delayTime
+    delay.feedback.value = delayFeedback
+    delay.wet.value = delayWet
+
+    // Synth
+    const wave = randomElm(['triangle', 'square', 'sine', 'sawtooth'])
     const synth = new Synth({
       oscillator: { type: wave }
-    }).chain(reverb)
+    }).chain(delay, chorus, reverb)
     const release = randomNum(MIN_RELEASE, MAX_RELEASE)
+    const attack = Math.random() * MAX_RELEASE_SECONDS
+    synth.envelope.attack = attack
+
+    const volume = 0.5
+    synth.volume.value = gainToDb(volume)
+    // TODO: add scales
+
+    /*
+    Things that can be updated:
+    - wave: WAVES
+    - attack:  0 - MAX_RELEASE_SECONDS
+    - release: MIN_RELEASE - MAX_RELEASE
+    - delayTime: NORMAL_RANGE
+    - delayFeedBack: NORMAL_RANGE
+    - delayWet: NORMAL_RANGE
+    - reverbRoomSize: NORMAL_RANGE 
+    - reverbWet: NORMAL_RANGE 
+    - chorusDelayTime: 2 - 20
+    - chorusDepth: NORMAL_RANGE
+    - chorusWet: NORMAL_RANGE
+    - volume: NORMAL_RANGE
+    - speeds: 0 - MAX_SPEED[]
+    */
+
     return {
       synth,
-      reverb,
-      dampening,
       wave,
+      attack,
       release,
+      volume,
+      reverb,
+      reverbRoomSize,
+      reverbWet,
+      delay,
+      delayTime,
+      delayFeedback,
+      delayWet,
+      chorus,
+      chorusDelayTime,
+      chorusDepth,
+      chorusWet,
       coords: [x, y],
       speeds: [Math.random() * MAX_SPEED, Math.random() * MAX_SPEED]
     }
@@ -87,6 +148,5 @@ export const init = (actions) => {
     cornerCoords,
     segmentCoords
   })
-  window.setInterval(actions.updateBalls, 100)
-  // raf(actions.updateBalls)
+  raf(actions.updateBalls)
 }
