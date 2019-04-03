@@ -121,10 +121,8 @@ export const actions = {
   },
   updateBalls: () => (state, actions) => {
     const {
-      ballCoords,
-      ballSpeeds,
-      ballCollisions,
-      ballSynths,
+      ballsData,
+      ballsCollisions,
       right,
       left,
       top,
@@ -135,23 +133,36 @@ export const actions = {
       bottomOffset
     } = state
 
-    const updateBallCollisions = (i, ii, val) => {
-      ballCollisions[`${i}-${ii}`] = val
-      const synth = ballSynths[val]
-      const note = SCALES.IONIAN[ii] + '4'
-      synth.triggerAttackRelease(note, 200)
+    const updateBallCollisions = (wallIndex, segmentIndex, ballsDataIndex) => {
+      // Reset ballsCollisions
+      Object.keys(ballsCollisions).forEach((key) => {
+        if (ballsCollisions[key] === ballsDataIndex) {
+          delete ballsCollisions[key]
+        }
+      })
+      const ballsCollisionsKey = `${wallIndex}-${segmentIndex}`
+      ballsCollisions[ballsCollisionsKey] = ballsDataIndex
+      const { synth, release } = ballsData[ballsDataIndex]
+      const note = SCALES.IONIAN[segmentIndex]
+      if (note) {
+        synth.triggerAttackRelease(note, release / 1000)
+      }
       window.setTimeout(() => {
-        ballCollisions[`${i}-${ii}`] = undefined
+        delete ballsCollisions[ballsCollisionsKey]
         actions.set({
-          ballCollisions
+          ballsCollisions
         })
-      }, 200)
+      }, release)
     }
 
-    // Mutates ballCollisions
-    const newBallSpeeds = ballSpeeds.map(([xSpeed, ySpeed], i) => {
-      const [x, y] = ballCoords[i]
+    // Also mutates ballsCollisions
+    const newBallsData = ballsData.map((ballData, i) => {
+      const { speeds, coords } = ballData
+      let [xSpeed, ySpeed] = speeds
+      let [x, y] = coords
       let noteIndex
+
+      // First update speeds
       if (x >= rightOffset || x <= leftOffset) {
         noteIndex = findNoteIndex(y, top, bottom)
         xSpeed = xSpeed * -1
@@ -170,39 +181,37 @@ export const actions = {
           updateBallCollisions(2, noteIndex, i)
         }
       }
-      return [xSpeed, ySpeed]
-    })
 
-    const newBallCoords = ballCoords.map(([x, y], i) => {
-      const [xSpeed, ySpeed] = newBallSpeeds[i]
+      // Then use new speeds to update coords
       if (x >= rightOffset || x <= leftOffset) {
         if (x >= rightOffset) {
           x = rightOffset - 1
-        }
-        if (x <= leftOffset) {
+        } else if (x <= leftOffset) {
           x = leftOffset + 1
         }
       } else {
         x = x + xSpeed
       }
-
       if (y >= bottomOffset || y <= topOffset) {
         if (y >= bottomOffset) {
           y = bottomOffset - 1
-        }
-        if (y <= topOffset) {
+        } else if (y <= topOffset) {
           y = topOffset + 1
         }
       } else {
         y = y + ySpeed
       }
-      return [x, y]
+
+      return {
+        ...ballData,
+        speeds: [xSpeed, ySpeed],
+        coords: [x, y]
+      }
     })
 
     return {
-      ballCoords: newBallCoords,
-      ballCollisions,
-      ballSpeeds: newBallSpeeds
+      ballsData: newBallsData,
+      ballsCollisions
     }
   }
 }

@@ -1,6 +1,6 @@
 export const state = {
   segmentCoords: [],
-  ballCoords: [],
-  ballCollisions: {},
+  ballsData: [],
+  ballsCollisions: {},
   cornerCoords: []
 }

@@ -22,17 +22,17 @@ const Wrapper = style('div')({
   '& polyline': {
     transition: transitionString({
       props: ['stroke', 'transform'],
-      ms: 200,
+      ms: 100,
       ease: 'ease-out'
     })
   }
 })
 
-function segments({ segmentCoords, ballCollisions }) {
+function segments({ segmentCoords, ballsCollisions }) {
   const groups = segmentCoords.map((coordPairs, i) => {
     const polylines = coordPairs.map((coords, ii) => {
       const key = `${i}-${ii}`
-      const val = ballCollisions[key]
+      const val = ballsCollisions[key]
       let stroke = 'black'
       let style = {}
       if (val !== undefined) {
@@ -41,16 +41,16 @@ function segments({ segmentCoords, ballCollisions }) {
         switch (i) {
           default:
           case 0:
-            transform = 'translateY(-2px)'
+            transform = `translateY(-${STROKE_WIDTH}px)`
             break
           case 1:
-            transform = 'translateX(2px)'
+            transform = `translateX(${STROKE_WIDTH}px)`
             break
           case 2:
-            transform = 'translateY(2px)'
+            transform = `translateY(${STROKE_WIDTH}px)`
             break
           case 3:
-            transform = 'translateX(-2px)'
+            transform = `translateX(-${STROKE_WIDTH}px)`
             break
         }
         style = {
@@ -63,7 +63,6 @@ function segments({ segmentCoords, ballCollisions }) {
           style={style}
           stroke={stroke}
           stroke-width={STROKE_WIDTH}
-          stroke-linecap="square"
           key={`${i}:${ii}`}
           points={points}
         />
@@ -129,15 +128,15 @@ function handles({ actions, state }) {
   return <g>{rects}</g>
 }
 
-function balls({ state, actions }) {
-  const { ballCoords } = state
-  return ballCoords.map(([x, y], i) => (
-    <circle fill={COLORS[i]} cx={x} cy={y} r={BALL_RADIUS} />
-  ))
+function balls({ ballsData }) {
+  return ballsData.map(({ coords }, i) => {
+    const [x, y] = coords
+    return <circle fill={COLORS[i]} cx={x} cy={y} r={BALL_RADIUS} />
+  })
 }
 
 export function view(state, actions) {
-  const { segmentCoords, resizerOldCoords, svgWidth, svgHeight } = state
+  const { resizerOldCoords, svgWidth, svgHeight } = state
   const bottomOffset = (ENV.navHeight || 0) + 'px'
   const style = {
     bottom: bottomOffset
@@ -170,10 +169,12 @@ export function view(state, actions) {
             if (resizerOldCoords === undefined) {
               return
             }
-            actions.handleResize(getClientXY(ev))
+            window.requestAnimationFrame(() => {
+              actions.handleResize(getClientXY(ev))
+            })
           }}
         >
-          {balls({ actions, state })}
+          {balls(state)}
           {segments(state)}
           {handles({ actions, state })}
         </svg>

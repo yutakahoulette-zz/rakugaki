@@ -1,8 +1,11 @@
 import { clamp } from 'ramda'
-import { Synth } from 'tone'
+import { Synth, Freeverb } from 'tone'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import {
+  MIN_RELEASE,
+  MAX_RELEASE,
+  MAX_SPEED,
   MAX_INITIAL_SIZE,
   MIN_INITIAL_SIZE,
   PADDING,
@@ -10,6 +13,7 @@ import {
   BALL_COUNT
 } from './consts'
 import { randomNum } from '../../utils/randomNum'
+import { randomElm } from '../../utils/randomElm'
 import { raf } from '../../utils/raf'
 
 export const init = (actions) => {
@@ -43,8 +47,10 @@ export const init = (actions) => {
     bottomRightCoords,
     bottomLeftCoords
   ]
+
   const segmentCoords = cornerCoordsToSegmentCoords(cornerCoords)
-  const ballCoords = new Array(BALL_COUNT).fill().map(() => {
+
+  const ballsData = new Array(BALL_COUNT).fill().map(() => {
     const x = randomNum(
       topLeftCoords[0] + INITIAL_BALL_PADDING,
       topRightCoords[0] - INITIAL_BALL_PADDING
@@ -53,31 +59,34 @@ export const init = (actions) => {
       topLeftCoords[1] + INITIAL_BALL_PADDING,
       bottomLeftCoords[1] - INITIAL_BALL_PADDING
     )
-    return [x, y]
-  })
-  const ballSpeeds = new Array(BALL_COUNT).fill().map(() => {
-    const x = 2 + Math.random() * 4
-    const y = 2 + Math.random() * 4
-    return [x, y]
-  })
-
-  const ballSynths = new Array(BALL_COUNT).fill().map(() => {
+    const reverb = new Freeverb().toMaster()
+    const dampening = 1000
+    reverb.dampening.value = dampening
+    const wave = randomElm(['triangle', 'square', 'sine'])
     const synth = new Synth({
-      oscillator: { type: 'triangle' }
-    }).toMaster()
-    return synth
+      oscillator: { type: wave }
+    }).chain(reverb)
+    const release = randomNum(MIN_RELEASE, MAX_RELEASE)
+    return {
+      synth,
+      reverb,
+      dampening,
+      wave,
+      release,
+      coords: [x, y],
+      speeds: [Math.random() * MAX_SPEED, Math.random() * MAX_SPEED]
+    }
   })
 
   const boxSizeAndOffsets = getBoxSizeAndOffsets(cornerCoords)
   actions.set({
     ...boxSizeAndOffsets,
-    ballSpeeds,
-    ballCoords,
-    ballSynths,
+    ballsData,
     svgHeight: height,
     svgWidth: width,
     cornerCoords,
     segmentCoords
   })
-  raf(actions.updateBalls)
+  window.setInterval(actions.updateBalls, 100)
+  // raf(actions.updateBalls)
 }
