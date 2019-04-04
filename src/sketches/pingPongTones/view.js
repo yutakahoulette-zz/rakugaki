@@ -2,7 +2,14 @@ import { h } from 'hyperapp'
 import picostyle from 'picostyle'
 import { init } from './init'
 import { coordsToPoints } from '../../utils/coordsToPoints'
-import { STROKE_WIDTH, HANDLE_OFFSET, BALL_RADIUS, COLORS } from './consts'
+import {
+  STROKE_WIDTH,
+  HANDLE_OFFSET,
+  BALL_RADIUS,
+  BALL_WIDTH,
+  COLORS,
+  WAVES_ABBR
+} from './consts'
 
 import { getClientXY } from '../../utils/getClientXY'
 import { transitionString } from '../../utils/transitionString'
@@ -28,7 +35,7 @@ const Wrapper = style('div')({
   }
 })
 
-function segments({ segmentCoords, ballsCollisions }) {
+function Segments({ segmentCoords, ballsCollisions }) {
   const groups = segmentCoords.map((coordPairs, i) => {
     const polylines = coordPairs.map((coords, ii) => {
       const key = `${i}-${ii}`
@@ -99,7 +106,7 @@ const handlePartial = ({ actions, coords, i }) => ({
   )
 }
 
-function handles({ actions, state }) {
+function Handles(state, actions) {
   const { cornerCoords } = state
   const rects = cornerCoords.map((coords, i) => {
     const handle = handlePartial({ actions, state, coords, i })
@@ -128,11 +135,39 @@ function handles({ actions, state }) {
   return <g>{rects}</g>
 }
 
-function balls({ ballsData }) {
+function Balls({ ballsData }) {
   return ballsData.map(({ coords }, i) => {
     const [x, y] = coords
     return <circle fill={COLORS[i]} cx={x} cy={y} r={BALL_RADIUS} />
   })
+}
+
+function ControlDot(background) {
+  const ballSize = BALL_WIDTH + 'px'
+  const style = {
+    background,
+    height: ballSize,
+    width: ballSize,
+    'border-radius': BALL_RADIUS + 'px'
+  }
+  return <div style={style} />
+}
+
+function Controls(state, actions) {
+  return (
+    <div id="controls" class="flex container--narrow pb4 pt3">
+      {COLORS.map((color, i) => {
+        return (
+          <div class="w-25">
+            <a class="flex flex-wrap items-center justify-center">
+              {ControlDot(color)}
+              <span class="f6 pl2">{WAVES_ABBR[i]}</span>
+            </a>
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 export function view(state, actions) {
@@ -174,10 +209,11 @@ export function view(state, actions) {
             )
           }}
         >
-          {balls(state)}
-          {segments(state)}
-          {handles({ actions, state })}
+          {Balls(state)}
+          {Segments(state)}
+          {Handles(state, actions)}
         </svg>
+        {Controls(state, actions)}
       </Container>
     </Wrapper>
   )

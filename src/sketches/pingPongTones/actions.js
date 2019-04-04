@@ -2,6 +2,7 @@ import { MIN_SIZE, SEGMENT_COUNT, SCALES } from './consts'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import { percentInRange } from '../../utils/percentInRange'
+import { Frequency } from 'tone'
 
 export const actions = {
   set: (obj) => () => obj,
@@ -143,8 +144,20 @@ export const actions = {
       const ballsCollisionsKey = `${wallIndex}-${segmentIndex}`
       ballsCollisions[ballsCollisionsKey] = ballsDataIndex
       const { synth, release } = ballsData[ballsDataIndex]
-      const note = SCALES.IONIAN[segmentIndex]
+      let note = SCALES.IONIAN[segmentIndex]
       if (note) {
+        if (ballsDataIndex === 0) {
+          note = Frequency(note).transpose(-12)
+        }
+        if (ballsDataIndex === 1) {
+          note = Frequency(note).transpose(5.05)
+        }
+        if (ballsDataIndex === 3) {
+          note = Frequency(note).transpose(-7)
+        }
+        if (ballsDataIndex === 2) {
+          note = Frequency(note).transpose(12.05)
+        }
         synth.triggerAttackRelease(note, release / 1000)
       }
       window.setTimeout(() => {

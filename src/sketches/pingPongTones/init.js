@@ -20,8 +20,10 @@ import { raf } from '../../utils/raf'
 export const init = (actions) => {
   const { ENV = {} } = window
   const navHeight = ENV.navHeight || 0
+
   const width = window.innerWidth
-  const height = window.innerHeight - navHeight
+  const controlsHeight = document.querySelector('#controls').offsetHeight
+  const height = window.innerHeight - navHeight - controlsHeight
 
   const midX = width / 2
   const midY = height / 2
@@ -63,25 +65,25 @@ export const init = (actions) => {
 
     // Reverb
     const reverb = new JCReverb().toMaster()
-    const reverbRoomSize = 0.5
-    const reverbWet = 0.2
+    const reverbRoomSize = 0
+    const reverbWet = 0
     reverb.roomSize.value = reverbRoomSize
     reverb.wet.value = reverbWet
 
     // Chorus
     const chorus = new Chorus()
-    const chorusDelayTime = 2
-    const chorusDepth = 0.2
-    const chorusWet = 0.2
+    const chorusDelayTime = 20
+    const chorusDepth = 0
+    const chorusWet = 0
     chorus.delayTime = chorusDelayTime
     chorus.depth = chorusDepth
     chorus.wet.value = chorusWet
 
     // Delay
     const delay = new FeedbackDelay()
-    const delayTime = 0.1
-    const delayFeedback = 0.4
-    const delayWet = 0.2
+    const delayTime = 0
+    const delayFeedback = 0
+    const delayWet = 0
     delay.delayTime.value = delayTime
     delay.feedback.value = delayFeedback
     delay.wet.value = delayWet
@@ -92,10 +94,10 @@ export const init = (actions) => {
       oscillator: { type: wave }
     }).chain(delay, chorus, reverb)
     const release = randomNum(MIN_RELEASE, MAX_RELEASE)
-    const attack = 0.2
+    const attack = 0.1
     synth.envelope.attack = attack
 
-    const volume = ['sawtooth', 'square'].includes(wave) ? 0.2 : 0.7
+    const volume = ['sawtooth', 'square'].includes(wave) ? 0.2 : 0.75
     synth.volume.value = gainToDb(volume)
     // TODO: add scales
 
@@ -103,6 +105,7 @@ export const init = (actions) => {
     Things that can be updated:
     - attack:  0 - MAX_RELEASE_SECONDS
     - release: MIN_RELEASE - MAX_RELEASE
+    - detune: NORMAL_RANGE
     - delayTime: NORMAL_RANGE
     - delayFeedBack: NORMAL_RANGE
     - delayWet: NORMAL_RANGE
@@ -121,6 +124,7 @@ export const init = (actions) => {
       wave,
       attack,
       release,
+      detune: 0,
       volume,
       reverb,
       reverbRoomSize,
@@ -139,22 +143,14 @@ export const init = (actions) => {
   })
 
   const boxSizeAndOffsets = getBoxSizeAndOffsets(cornerCoords)
+
   actions.set({
     ...boxSizeAndOffsets,
     ballsData,
+    end: raf(actions.updateBalls),
     svgHeight: height,
     svgWidth: width,
     cornerCoords,
     segmentCoords
   })
-  window.toggle = () => {
-    if (window.is_playing) {
-      window.is_playing = false
-      window.end()
-    } else {
-      window.is_playing = true
-      window.end = raf(actions.updateBalls)
-    }
-  }
-  window.toggle()
 }

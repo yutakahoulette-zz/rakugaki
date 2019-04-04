@@ -18,11 +18,12 @@ export const PADDING = HANDLE_SIZE * 3
 export const SEGMENT_COUNT = ionian.length
 export const HANDLE_OFFSET = HANDLE_SIZE - STROKE_WIDTH / 2
 export const BALL_RADIUS = 6
+export const BALL_WIDTH = BALL_RADIUS * 2
 export const INITIAL_BALL_PADDING = BALL_RADIUS * 6
-// export const COLORS = [LEAF, PINK, POLLEN, RUST]
-export const COLORS = [LEAF]
+export const COLORS = [LEAF, PINK, POLLEN, RUST]
 export const BALL_COUNT = COLORS.length
 export const WAVES = ['square', 'triangle', 'sine', 'sawtooth']
+export const WAVES_ABBR = ['sqr', 'tri', 'sin', 'saw']
 export const SCALES = {
   IONIAN: ionian
 }
