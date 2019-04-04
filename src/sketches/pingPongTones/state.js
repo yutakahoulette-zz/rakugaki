@@ -3,5 +3,6 @@ export const state = {
   ballsData: [],
   ballsCollisions: {},
   cornerCoords: [],
-  isShowingModal: false
+  isShowingModal: false,
+  editIndex: 0
 }
