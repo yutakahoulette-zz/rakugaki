@@ -2,5 +2,6 @@ export const state = {
   segmentCoords: [],
   ballsData: [],
   ballsCollisions: {},
-  cornerCoords: []
+  cornerCoords: [],
+  isShowingModal: false
 }

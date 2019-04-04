@@ -146,18 +146,6 @@ export const actions = {
       const { synth, release } = ballsData[ballsDataIndex]
       let note = SCALES.IONIAN[segmentIndex]
       if (note) {
-        if (ballsDataIndex === 0) {
-          note = Frequency(note).transpose(-12)
-        }
-        if (ballsDataIndex === 1) {
-          note = Frequency(note).transpose(5.05)
-        }
-        if (ballsDataIndex === 3) {
-          note = Frequency(note).transpose(-7)
-        }
-        if (ballsDataIndex === 2) {
-          note = Frequency(note).transpose(12.05)
-        }
         synth.triggerAttackRelease(note, release / 1000)
       }
       window.setTimeout(() => {
