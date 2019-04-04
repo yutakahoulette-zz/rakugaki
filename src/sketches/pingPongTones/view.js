@@ -169,9 +169,9 @@ export function view(state, actions) {
             if (resizerOldCoords === undefined) {
               return
             }
-            window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() =>
               actions.handleResize(getClientXY(ev))
-            })
+            )
           }}
         >
           {balls(state)}

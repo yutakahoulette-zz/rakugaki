@@ -5,7 +5,7 @@ import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import {
   MIN_RELEASE,
   MAX_RELEASE,
-  MAX_RELEASE_SECONDS,
+  WAVES,
   MAX_SPEED,
   MAX_INITIAL_SIZE,
   MIN_INITIAL_SIZE,
@@ -14,7 +14,6 @@ import {
   BALL_COUNT
 } from './consts'
 import { randomNum } from '../../utils/randomNum'
-import { randomElm } from '../../utils/randomElm'
 import { gainToDb } from '../../utils/gainToDb'
 import { raf } from '../../utils/raf'
 
@@ -52,7 +51,7 @@ export const init = (actions) => {
 
   const segmentCoords = cornerCoordsToSegmentCoords(cornerCoords)
 
-  const ballsData = new Array(BALL_COUNT).fill().map(() => {
+  const ballsData = new Array(BALL_COUNT).fill().map((_, i) => {
     const x = randomNum(
       topLeftCoords[0] + INITIAL_BALL_PADDING,
       topRightCoords[0] - INITIAL_BALL_PADDING
@@ -64,45 +63,44 @@ export const init = (actions) => {
 
     // Reverb
     const reverb = new JCReverb().toMaster()
-    const reverbRoomSize = 0.1
-    const reverbWet = 0.1
+    const reverbRoomSize = 0.5
+    const reverbWet = 0.2
     reverb.roomSize.value = reverbRoomSize
     reverb.wet.value = reverbWet
 
     // Chorus
     const chorus = new Chorus()
-    const chorusDelayTime = 20
-    const chorusDepth = 0.1
-    const chorusWet = 1
+    const chorusDelayTime = 2
+    const chorusDepth = 0.2
+    const chorusWet = 0.2
     chorus.delayTime = chorusDelayTime
     chorus.depth = chorusDepth
     chorus.wet.value = chorusWet
 
     // Delay
     const delay = new FeedbackDelay()
-    const delayTime = Math.random()
-    const delayFeedback = Math.random()
-    const delayWet = 0.1
+    const delayTime = 0.1
+    const delayFeedback = 0.4
+    const delayWet = 0.2
     delay.delayTime.value = delayTime
     delay.feedback.value = delayFeedback
     delay.wet.value = delayWet
 
     // Synth
-    const wave = randomElm(['triangle', 'square', 'sine', 'sawtooth'])
+    const wave = WAVES[i]
     const synth = new Synth({
       oscillator: { type: wave }
     }).chain(delay, chorus, reverb)
     const release = randomNum(MIN_RELEASE, MAX_RELEASE)
-    const attack = Math.random() * MAX_RELEASE_SECONDS
+    const attack = 0.2
     synth.envelope.attack = attack
 
-    const volume = 0.5
+    const volume = ['sawtooth', 'square'].includes(wave) ? 0.2 : 0.7
     synth.volume.value = gainToDb(volume)
     // TODO: add scales
 
     /*
     Things that can be updated:
-    - wave: WAVES
     - attack:  0 - MAX_RELEASE_SECONDS
     - release: MIN_RELEASE - MAX_RELEASE
     - delayTime: NORMAL_RANGE
@@ -117,6 +115,7 @@ export const init = (actions) => {
     - speeds: 0 - MAX_SPEED[]
     */
 
+    const getSpeed = () => Math.random() * MAX_SPEED
     return {
       synth,
       wave,
@@ -135,7 +134,7 @@ export const init = (actions) => {
       chorusDepth,
       chorusWet,
       coords: [x, y],
-      speeds: [Math.random() * MAX_SPEED, Math.random() * MAX_SPEED]
+      speeds: [getSpeed(), getSpeed()]
     }
   })
 
@@ -148,5 +147,14 @@ export const init = (actions) => {
     cornerCoords,
     segmentCoords
   })
-  raf(actions.updateBalls)
+  window.toggle = () => {
+    if (window.is_playing) {
+      window.is_playing = false
+      window.end()
+    } else {
+      window.is_playing = true
+      window.end = raf(actions.updateBalls)
+    }
+  }
+  window.toggle()
 }

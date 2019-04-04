@@ -5,11 +5,11 @@ import { percentInRange } from '../../utils/percentInRange'
 
 export const actions = {
   set: (obj) => () => obj,
-  handleResize: (resizerNewCoords) => ({
-    resizerOldCoords,
-    resizerIndex,
-    cornerCoords
-  }) => {
+  handleResize: (resizerNewCoords) => (state) => {
+    const { resizerOldCoords, resizerIndex, cornerCoords } = state
+    if (!resizerOldCoords) {
+      return state
+    }
     const [resizerNewCoordsX, resizerNewCoordsY] = resizerNewCoords
     const [resizerOldCoordsX, resizerOldCoordsY] = resizerOldCoords
     let xDiff = resizerNewCoordsX - resizerOldCoordsX
@@ -157,29 +157,43 @@ export const actions = {
 
     // Also mutates ballsCollisions
     const newBallsData = ballsData.map((ballData, i) => {
-      const { speeds, coords } = ballData
+      const { speeds, coords, wallIndex } = ballData
       let [xSpeed, ySpeed] = speeds
       let [x, y] = coords
       let noteIndex
+      let newWallIndex
 
       // First update speeds
       if (x >= rightOffset || x <= leftOffset) {
         noteIndex = findNoteIndex(y, top, bottom)
-        xSpeed = xSpeed * -1
         if (x >= rightOffset) {
-          updateBallCollisions(1, noteIndex, i)
+          newWallIndex = 1
+          if (wallIndex !== newWallIndex) {
+            xSpeed = -Math.abs(xSpeed)
+          }
         } else {
-          updateBallCollisions(3, noteIndex, i)
+          newWallIndex = 3
+          if (wallIndex !== newWallIndex) {
+            xSpeed = Math.abs(xSpeed)
+          }
         }
+        updateBallCollisions(newWallIndex, noteIndex, i)
       }
+
       if (y <= topOffset || y >= bottomOffset) {
         noteIndex = findNoteIndex(x, left, right)
-        ySpeed = ySpeed * -1
         if (y <= topOffset) {
-          updateBallCollisions(0, noteIndex, i)
+          newWallIndex = 0
+          if (wallIndex !== newWallIndex) {
+            ySpeed = Math.abs(ySpeed)
+          }
         } else {
-          updateBallCollisions(2, noteIndex, i)
+          newWallIndex = 2
+          if (wallIndex !== newWallIndex) {
+            ySpeed = -Math.abs(ySpeed)
+          }
         }
+        updateBallCollisions(newWallIndex, noteIndex, i)
       }
 
       // Then use new speeds to update coords
@@ -204,6 +218,7 @@ export const actions = {
 
       return {
         ...ballData,
+        wallIndex: newWallIndex != undefined ? newWallIndex : wallIndex,
         speeds: [xSpeed, ySpeed],
         coords: [x, y]
       }

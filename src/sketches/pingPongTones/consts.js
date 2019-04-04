@@ -1,4 +1,4 @@
-import { LEAF, PINK, POLLEN } from '../../constants/colors'
+import { LEAF, PINK, POLLEN, RUST } from '../../constants/colors'
 import { IONIAN, octaveScales } from '../../constants/toneScales'
 
 const [ionian] = [IONIAN].map((scale) => octaveScales(scale))
@@ -19,8 +19,10 @@ export const SEGMENT_COUNT = ionian.length
 export const HANDLE_OFFSET = HANDLE_SIZE - STROKE_WIDTH / 2
 export const BALL_RADIUS = 6
 export const INITIAL_BALL_PADDING = BALL_RADIUS * 6
-export const BALL_COUNT = 3
-export const COLORS = [LEAF, PINK, POLLEN]
+// export const COLORS = [LEAF, PINK, POLLEN, RUST]
+export const COLORS = [LEAF]
+export const BALL_COUNT = COLORS.length
+export const WAVES = ['square', 'triangle', 'sine', 'sawtooth']
 export const SCALES = {
   IONIAN: ionian
 }

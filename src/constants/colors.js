@@ -1,5 +1,6 @@
 // Colors from:
 // http://museumzero.blogspot.com/2013/09/in-josef-albers-app-colors-interact.html
+
 export const FOREST_GREEN = '#3d5041'
 export const CRIMSON = '#9f1b35'
 export const ORANGE = '#fe3227'
