@@ -72,7 +72,7 @@ export const init = (actions) => {
 
     // Chorus
     const chorus = new Chorus()
-    const chorusDelayTime = 20
+    const chorusDelayTime = 2
     const chorusDepth = 0
     const chorusWet = 0
     chorus.delayTime = chorusDelayTime
@@ -93,33 +93,32 @@ export const init = (actions) => {
     const synth = new Synth({
       oscillator: { type: wave }
     }).chain(delay, chorus, reverb)
-    const release = randomNum(MIN_RELEASE, MAX_RELEASE)
-    const attack = 0.1
-    synth.envelope.attack = attack
+    const release = Math.floor(randomNum(MIN_RELEASE, MAX_RELEASE) / 100) * 100
+    const attack = 100
+    synth.envelope.attack = attack / 1000
 
     const volume = ['sawtooth', 'square'].includes(wave) ? 0.2 : 0.75
+    const speed = (i + 1) * 2
     synth.volume.value = gainToDb(volume)
-    // TODO: add scales
 
     /*
     Things that can be updated:
-    - attack:  0 - MAX_RELEASE_SECONDS
-    - release: MIN_RELEASE - MAX_RELEASE
+    - [x] attack:  0 - MAX_RELEASE_SECONDS
+    - [x] release: MIN_RELEASE - MAX_RELEASE
     - detune: NORMAL_RANGE
-    - delayTime: NORMAL_RANGE
-    - delayFeedBack: NORMAL_RANGE
-    - delayWet: NORMAL_RANGE
-    - reverbRoomSize: NORMAL_RANGE 
-    - reverbWet: NORMAL_RANGE 
-    - chorusDelayTime: 2 - 20
-    - chorusDepth: NORMAL_RANGE
-    - chorusWet: NORMAL_RANGE
+    - [x] delayTime: NORMAL_RANGE
+    - [x] delayFeedBack: NORMAL_RANGE
+    - [x] delayWet: NORMAL_RANGE
+    - [x] reverbRoomSize: NORMAL_RANGE 
+    - [x] reverbWet: NORMAL_RANGE 
+    - [x] chorusDelayTime: 2 - 20
+    - [x] chorusDepth: NORMAL_RANGE
+    - [x] chorusWet: NORMAL_RANGE
     - [x] volume: NORMAL_RANGE
     - [x] xSpeed: 0 - MAX_SPEED
     - [x] ySpeed: 0 - MAX_SPEED
     */
 
-    const getSpeed = () => Math.random() * (MAX_SPEED - 1)
     return {
       synth,
       wave,
@@ -139,8 +138,8 @@ export const init = (actions) => {
       chorusDepth,
       chorusWet,
       coords: [x, y],
-      xSpeed: Math.ceil(getSpeed()),
-      ySpeed: Math.ceil(getSpeed())
+      xSpeed: speed,
+      ySpeed: speed
     }
   })
 

@@ -6,7 +6,7 @@ export const Modal = ({ isShowing, title, hideFn }, children) => {
     'top-0 bottom-0 left-0 right-0 bg-white fixed z-max overflow-auto'
   return (
     isShowing && (
-      <div class={classes} style={{ opacity: 0.92 }}>
+      <div class={classes} style={{ opacity: 0.9 }}>
         <div class="container ph3 pt4 flex items-end flex-column">
           <NavButton fontSize="2rem" onclick={hideFn}>
             ×

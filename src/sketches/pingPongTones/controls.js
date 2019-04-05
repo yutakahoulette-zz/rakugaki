@@ -1,5 +1,11 @@
 import { h } from 'hyperapp'
-import { COLORS, WAVES_ABBR, MAX_SPEED } from './consts'
+import {
+  COLORS,
+  WAVES_ABBR,
+  MAX_SPEED,
+  MIN_RELEASE,
+  MAX_RELEASE
+} from './consts'
 import { Modal } from '../../ui/modal'
 import { SelectField } from '../../ui/selectField'
 import { RangeField } from '../../ui/rangeField'
@@ -27,7 +33,21 @@ const Col = ({}, children) => {
 function ControlsModal({ state, actions }) {
   const { editIndex, isShowingModal, ballsData } = state
   const ballData = ballsData[editIndex] || {}
-  const { attack, xSpeed, ySpeed, volume } = ballData
+  const {
+    attack,
+    xSpeed,
+    ySpeed,
+    volume,
+    release,
+    reverbRoomSize,
+    reverbWet,
+    chorusDelayTime,
+    chorusDepth,
+    chorusWet,
+    delayTime,
+    delayFeedback,
+    delayWet
+  } = ballData
   const title = <div class="flex items-center">{SynthTitle(editIndex)}</div>
   return (
     <Modal
@@ -54,23 +74,14 @@ function ControlsModal({ state, actions }) {
             })}
           />
         </Col>
-        <Col>
-          <RangeField
-            label="Attack"
-            value={attack}
-            cb={updateBallData({
-              actions,
-              key: 'attack',
-              path: ['envelope', 'attack'],
-              prop: 'synth'
-            })}
-          />
-        </Col>
+        <Col />
         <Col>
           <RangeField
             label="X speed"
             value={Math.abs(xSpeed)}
+            valueLabel={Math.abs(xSpeed) * 10}
             max={MAX_SPEED}
+            step={0.1}
             cb={(val) => {
               actions.updateBallData({
                 key: 'xSpeed',
@@ -83,13 +94,152 @@ function ControlsModal({ state, actions }) {
           <RangeField
             label="Y speed"
             value={Math.abs(ySpeed)}
+            valueLabel={Math.abs(ySpeed) * 10}
             max={MAX_SPEED}
+            step={0.1}
             cb={(val) => {
               actions.updateBallData({
                 key: 'ySpeed',
                 val: ySpeed >= 0 ? val : -val
               })
             }}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Release"
+            step={100}
+            value={release}
+            valueLabel={release + 'ms'}
+            min={MIN_RELEASE}
+            max={MAX_RELEASE}
+            cb={updateBallData({
+              actions,
+              key: 'release'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Attack"
+            value={attack}
+            valueLabel={attack + 'ms'}
+            min={MIN_RELEASE}
+            max={MAX_RELEASE}
+            step={100}
+            cb={updateBallData({
+              actions,
+              transform: (val) => val / 1000,
+              key: 'attack',
+              path: ['envelope', 'attack'],
+              prop: 'synth'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Reverb size"
+            value={reverbRoomSize}
+            isPercent={true}
+            cb={updateBallData({
+              actions,
+              key: 'reverbRoomSize',
+              path: ['roomSize', 'value'],
+              prop: 'reverb'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Reverb wet"
+            value={reverbWet}
+            isPercent={true}
+            cb={updateBallData({
+              actions,
+              key: 'reverbWet',
+              path: ['wet', 'value'],
+              prop: 'reverb'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Chorus delay"
+            value={chorusDelayTime}
+            min={2}
+            max={20}
+            cb={updateBallData({
+              actions,
+              key: 'chorusDelayTime',
+              path: ['delayTime'],
+              prop: 'chorus'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Chorus depth"
+            value={chorusDepth}
+            isPercent={true}
+            cb={updateBallData({
+              actions,
+              key: 'chorusDepth',
+              path: ['depth'],
+              prop: 'chorus'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Chorus wet"
+            value={chorusWet}
+            isPercent={true}
+            cb={updateBallData({
+              actions,
+              key: 'chorusWet',
+              path: ['wet', 'value'],
+              prop: 'chorus'
+            })}
+          />
+        </Col>
+        <Col />
+        <Col>
+          <RangeField
+            label="Delay time"
+            value={delayTime}
+            isPercent={true}
+            cb={updateBallData({
+              actions,
+              key: 'delayTime',
+              path: ['delayTime', 'value'],
+              prop: 'delay'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Delay feedback"
+            value={delayFeedback}
+            isPercent={true}
+            cb={updateBallData({
+              actions,
+              key: 'delayFeedback',
+              path: ['feedback', 'value'],
+              prop: 'delay'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Delay wet"
+            value={delayWet}
+            isPercent={true}
+            cb={updateBallData({
+              actions,
+              key: 'delayWet',
+              path: ['wet', 'value'],
+              prop: 'delay'
+            })}
           />
         </Col>
       </div>
