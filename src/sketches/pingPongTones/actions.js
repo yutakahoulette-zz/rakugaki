@@ -158,8 +158,7 @@ export const actions = {
 
     // Also mutates ballsCollisions
     const newBallsData = ballsData.map((ballData, i) => {
-      const { speeds, coords, wallIndex } = ballData
-      let [xSpeed, ySpeed] = speeds
+      let { xSpeed, ySpeed, coords, wallIndex } = ballData
       let [x, y] = coords
       let noteIndex
       let newWallIndex
@@ -220,7 +219,8 @@ export const actions = {
       return {
         ...ballData,
         wallIndex: newWallIndex != undefined ? newWallIndex : wallIndex,
-        speeds: [xSpeed, ySpeed],
+        xSpeed: xSpeed,
+        ySpeed: ySpeed,
         coords: [x, y]
       }
     })
@@ -229,7 +229,35 @@ export const actions = {
       ballsData: newBallsData,
       ballsCollisions
     }
+  },
+  updateBallData: ({ key, val, path, prop, transform }) => ({
+    editIndex,
+    ballsData
+  }) => {
+    if (path && prop) {
+      const obj = ballsData[editIndex][prop]
+      const len = path.length
+      path.reduce((acc, key, i) => {
+        if (i === len - 1) {
+          acc[key] = transform ? transform(val) : val
+        }
+        return acc[key]
+      }, obj)
+    }
+    return updateBallsData({
+      ballsData,
+      editIndex,
+      key,
+      val
+    })
   }
+}
+
+const updateBallsData = ({ ballsData, editIndex, key, val }) => {
+  const ballData = ballsData[editIndex]
+  ballData[key] = val
+  ballsData[editIndex] = ballData
+  return { ballsData }
 }
 
 function findNoteIndex(n, min, max) {

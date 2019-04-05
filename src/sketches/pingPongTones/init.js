@@ -114,11 +114,12 @@ export const init = (actions) => {
     - chorusDelayTime: 2 - 20
     - chorusDepth: NORMAL_RANGE
     - chorusWet: NORMAL_RANGE
-    - volume: NORMAL_RANGE
-    - speeds: 0 - MAX_SPEED[]
+    - [x] volume: NORMAL_RANGE
+    - [x] xSpeed: 0 - MAX_SPEED
+    - [x] ySpeed: 0 - MAX_SPEED
     */
 
-    const getSpeed = () => Math.random() * MAX_SPEED
+    const getSpeed = () => Math.random() * (MAX_SPEED - 1)
     return {
       synth,
       wave,
@@ -138,7 +139,8 @@ export const init = (actions) => {
       chorusDepth,
       chorusWet,
       coords: [x, y],
-      speeds: [getSpeed(), getSpeed()]
+      xSpeed: Math.ceil(getSpeed()),
+      ySpeed: Math.ceil(getSpeed())
     }
   })
 
