@@ -80,6 +80,18 @@ function ControlsModal({ state, actions }) {
         </Col>
         <Col>
           <RangeField
+            label="Octave"
+            value={octave}
+            min={-2}
+            max={2}
+            cb={updateBallData({
+              actions,
+              key: 'octave'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
             label="Detune"
             isPercent={true}
             value={detune}
@@ -106,19 +118,6 @@ function ControlsModal({ state, actions }) {
             })}
           />
         </Col>
-        <Col>
-          <RangeField
-            label="Octave"
-            value={octave}
-            min={-2}
-            max={2}
-            cb={updateBallData({
-              actions,
-              key: 'octave'
-            })}
-          />
-        </Col>
-        <Col />
         <Col>
           <RangeField
             label="X speed"
@@ -246,7 +245,6 @@ function ControlsModal({ state, actions }) {
             })}
           />
         </Col>
-        <Col />
         <Col>
           <RangeField
             label="Delay time"

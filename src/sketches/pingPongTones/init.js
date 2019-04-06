@@ -6,7 +6,6 @@ import {
   MIN_RELEASE,
   MAX_RELEASE,
   WAVES,
-  MAX_SPEED,
   MAX_INITIAL_SIZE,
   MIN_INITIAL_SIZE,
   PADDING,
@@ -58,10 +57,11 @@ export const init = (actions) => {
       topLeftCoords[0] + INITIAL_BALL_PADDING,
       topRightCoords[0] - INITIAL_BALL_PADDING
     )
-    const y = randomNum(
-      topLeftCoords[1] + INITIAL_BALL_PADDING,
-      bottomLeftCoords[1] - INITIAL_BALL_PADDING
-    )
+
+    const yInterval =
+      (bottomLeftCoords[1] - topLeftCoords[1]) / (BALL_COUNT - 1)
+
+    const y = yInterval * i + topLeftCoords[1]
 
     // Reverb
     const reverb = new JCReverb().toMaster()
@@ -101,24 +101,6 @@ export const init = (actions) => {
     const speed = (i + 1) * 2
     synth.volume.value = gainToDb(volume)
 
-    /*
-    Things that can be updated:
-    - [x] attack:  0 - MAX_RELEASE_SECONDS
-    - [x] release: MIN_RELEASE - MAX_RELEASE
-    - detune: NORMAL_RANGE
-    - [x] delayTime: NORMAL_RANGE
-    - [x] delayFeedBack: NORMAL_RANGE
-    - [x] delayWet: NORMAL_RANGE
-    - [x] reverbRoomSize: NORMAL_RANGE 
-    - [x] reverbWet: NORMAL_RANGE 
-    - [x] chorusDelayTime: 2 - 20
-    - [x] chorusDepth: NORMAL_RANGE
-    - [x] chorusWet: NORMAL_RANGE
-    - [x] volume: NORMAL_RANGE
-    - [x] xSpeed: 0 - MAX_SPEED
-    - [x] ySpeed: 0 - MAX_SPEED
-    */
-
     return {
       synth,
       wave,
@@ -141,7 +123,7 @@ export const init = (actions) => {
       chorusWet,
       coords: [x, y],
       xSpeed: speed,
-      ySpeed: speed
+      ySpeed: 8
     }
   })
 
