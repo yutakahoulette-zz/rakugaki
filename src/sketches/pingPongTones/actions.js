@@ -143,9 +143,12 @@ export const actions = {
       })
       const ballsCollisionsKey = `${wallIndex}-${segmentIndex}`
       ballsCollisions[ballsCollisionsKey] = ballsDataIndex
-      const { synth, release } = ballsData[ballsDataIndex]
+      const { synth, release, octave } = ballsData[ballsDataIndex]
       let note = SCALES.IONIAN[segmentIndex]
       if (note) {
+        if (octave) {
+          note = Frequency(note).transpose(octave * 12)
+        }
         synth.triggerAttackRelease(note, release / 1000)
       }
       window.setTimeout(() => {

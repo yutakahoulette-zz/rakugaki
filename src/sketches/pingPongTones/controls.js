@@ -31,6 +31,7 @@ const Col = ({}, children) => {
 }
 
 function ControlsModal({ state, actions }) {
+  if (!state.isShowingModal) return
   const { editIndex, isShowingModal, ballsData } = state
   const ballData = ballsData[editIndex] || {}
   const {
@@ -46,7 +47,10 @@ function ControlsModal({ state, actions }) {
     chorusWet,
     delayTime,
     delayFeedback,
-    delayWet
+    delayWet,
+    detune,
+    portamento,
+    octave
   } = ballData
   const title = <div class="flex items-center">{SynthTitle(editIndex)}</div>
   return (
@@ -71,6 +75,46 @@ function ControlsModal({ state, actions }) {
               key: 'volume',
               path: ['volume', 'value'],
               prop: 'synth'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Detune"
+            isPercent={true}
+            value={detune}
+            min={-100}
+            cb={updateBallData({
+              actions,
+              transform: (percent) => percent * 100,
+              key: 'detune',
+              path: ['detune', 'value'],
+              prop: 'synth'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Portamento"
+            isPercent={true}
+            value={portamento}
+            cb={updateBallData({
+              actions,
+              key: 'portamento',
+              path: ['portamento'],
+              prop: 'synth'
+            })}
+          />
+        </Col>
+        <Col>
+          <RangeField
+            label="Octave"
+            value={octave}
+            min={-2}
+            max={2}
+            cb={updateBallData({
+              actions,
+              key: 'octave'
             })}
           />
         </Col>

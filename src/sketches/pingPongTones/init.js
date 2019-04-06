@@ -125,6 +125,8 @@ export const init = (actions) => {
       attack,
       release,
       detune: 0,
+      octave: 0,
+      portamento: 0,
       volume,
       reverb,
       reverbRoomSize,

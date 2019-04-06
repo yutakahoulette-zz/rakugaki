@@ -1,3 +1,5 @@
+import { firstKeyVal } from '../utils/firstKeyVal'
+
 export function octaveScales(scale, octaves = [3, 4]) {
   return octaves
     .map((num) => scale.map((note) => `${note}${num}`))
@@ -17,3 +19,19 @@ export const MIXOLYDIAN = ['C', 'D', 'E', 'F', 'G', 'A', 'Bb']
 export const AEOLIAN = ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb']
 
 export const LOCRIAN = ['C', 'Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb']
+
+export const ALL_SCALES_WITH_OCTAVES = [
+  { IONIAN },
+  { DORIAN },
+  { PHRYGIAN },
+  { LYDIAN },
+  { MIXOLYDIAN },
+  { AEOLIAN },
+  { LOCRIAN }
+].reduce((acc, scale) => {
+  const [key, val] = firstKeyVal(scale)
+  return {
+    [key]: octaveScales(val),
+    ...acc
+  }
+}, {})
