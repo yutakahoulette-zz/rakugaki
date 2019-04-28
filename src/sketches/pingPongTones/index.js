@@ -1,6 +1,7 @@
 import { state } from './state'
 import { actions } from './actions'
 import { view } from './view'
+import { Controls } from './controls'
 
 const description = `Untitled`
 
@@ -13,3 +14,9 @@ export const pingPongTones = {
   actions,
   view
 }
+
+// TODO:
+// - don't allow resizing outside of SVG
+// - style controls
+// - add functionality to controls
+// - add resize for touch screens
