@@ -29,18 +29,8 @@ export const view = (state, actions) => {
       <Container
         oncreate={() => {
           init(actions)
-          const keyPressEv = window.addEventListener('keypress', (ev) => {
-            if (!ev.key === 'x') {
-              return
-            }
-            actions.set({
-              isShowingModal: false
-            })
-          })
-          actions.set({ keyPressEv })
         }}
         ondestroy={() => {
-          window.removeEventListener('keypress', state.keyPressEv)
           actions.reset()
         }}
       >

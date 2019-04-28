@@ -200,7 +200,6 @@ export const ControlsModal = ({ actions, state }) => {
           />
         </Col>
       </div>
-      <p>Tip: type 'x' on your keyboard to close the modal.</p>
     </Modal>
   )
 }
