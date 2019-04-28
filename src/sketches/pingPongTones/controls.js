@@ -291,24 +291,38 @@ function ControlsModal({ state, actions }) {
 
 export function Controls(state, actions) {
   return [
-    <div id="controls" class="flex container--narrow pb4 pt3">
-      {COLORS.map((_, i) => {
-        return (
-          <div class="w-25">
-            <a
-              class="flex items-center justify-center f6"
-              onclick={() => {
-                actions.set({
-                  editIndex: i,
-                  isShowingModal: true
-                })
-              }}
-            >
-              {SynthTitle(i)}
-            </a>
-          </div>
-        )
-      })}
+    <div id="controls" class="container--narrow">
+      <div class="flex pb4 pt3">
+        {COLORS.map((_, i) => {
+          return (
+            <div class="w-25 tc" key={`synth-modal-trigger-${i}`}>
+              <button
+                class="flex items-center justify-center f6 ml-auto mr-auto button-link"
+                onclick={() => {
+                  actions.set({
+                    editIndex: i,
+                    isShowingModal: true
+                  })
+                }}
+              >
+                {SynthTitle(i)}
+              </button>
+            </div>
+          )
+        })}
+      </div>
+      <div class="flex pb4">
+        <div>
+          <button class="button">Play</button>
+        </div>
+        <div>
+          <label for="mute" class="pr2">
+            Mute
+          </label>
+          <input id="mute" type="checkbox" checked={true} onchange={() => {}} />
+        </div>
+        <SelectField options={['foo', 'bar']} label="Scale" />
+      </div>
     </div>,
     <ControlsModal actions={actions} state={state} />
   ]

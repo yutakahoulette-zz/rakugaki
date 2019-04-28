@@ -51,6 +51,8 @@ input[type='text'] {
   background: none;
 }
 
+.button-link {
+}
 .button--small {
   padding: 4px 8px;
 }
@@ -83,9 +85,14 @@ select {
   cursor: not-allowed;
 }
 
+.button-link,
 a {
   text-decoration: underline;
   color: black;
+}
+
+.button-link {
+  border: none;
 }
 
 a,

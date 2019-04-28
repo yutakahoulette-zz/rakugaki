@@ -16,18 +16,22 @@ export const Controls = ({ state, actions }) => {
       <div class="flex pb3">
         {new Array(COUNT).fill().map((_, i) => {
           return (
-            <div class="tc" style={{ width: `${COL_WIDTH}%` }}>
-              <a
+            <div
+              class="tc"
+              key={`synth-modal-trigger-${i}`}
+              style={{ width: `${COL_WIDTH}%` }}
+            >
+              <button
                 onclick={() => {
                   actions.set({
                     editIndex: i,
                     isShowingModal: true
                   })
                 }}
-                class="f6"
+                class="f6 button-link"
               >
                 {getSynthTitle(i, toneStacks[i] || {}, true)}
-              </a>
+              </button>
             </div>
           )
         })}
