@@ -1,4 +1,4 @@
-import { MIN_SIZE, SEGMENT_COUNT, SCALES } from './consts'
+import { MIN_SIZE, SEGMENT_COUNT, SCALES, HANDLE_SIZE } from './consts'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import { percentInRange } from '../../utils/percentInRange'
@@ -7,7 +7,13 @@ import { Frequency } from 'tone'
 export const actions = {
   set: (obj) => () => obj,
   handleResize: (resizerNewCoords) => (state) => {
-    const { resizerOldCoords, resizerIndex, cornerCoords } = state
+    const {
+      resizerOldCoords,
+      resizerIndex,
+      cornerCoords,
+      svgWidth,
+      svgHeight
+    } = state
     if (!resizerOldCoords) {
       return state
     }
@@ -36,9 +42,17 @@ export const actions = {
           if (boxWidth - xDiff <= MIN_SIZE) {
             xDiff = 0
           }
+        } else {
+          if (topLeft[0] <= HANDLE_SIZE) {
+            xDiff = 0
+          }
         }
         if (!isExpandingY) {
           if (boxHeight - yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        } else {
+          if (topLeft[1] <= HANDLE_SIZE) {
             yDiff = 0
           }
         }
@@ -57,9 +71,17 @@ export const actions = {
           if (boxWidth + xDiff <= MIN_SIZE) {
             xDiff = 0
           }
+        } else {
+          if (topRight[0] >= svgWidth - HANDLE_SIZE) {
+            xDiff = 0
+          }
         }
         if (!isExpandingY) {
           if (boxHeight - yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        } else {
+          if (topRight[1] <= HANDLE_SIZE) {
             yDiff = 0
           }
         }
@@ -78,9 +100,17 @@ export const actions = {
           if (boxWidth + xDiff <= MIN_SIZE) {
             xDiff = 0
           }
+        } else {
+          if (bottomRight[0] >= svgWidth - HANDLE_SIZE) {
+            xDiff = 0
+          }
         }
         if (!isExpandingY) {
           if (boxHeight + yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        } else {
+          if (bottomRight[1] >= svgHeight - HANDLE_SIZE) {
             yDiff = 0
           }
         }
@@ -99,9 +129,17 @@ export const actions = {
           if (boxWidth - xDiff <= MIN_SIZE) {
             xDiff = 0
           }
+        } else {
+          if (bottomLeft[0] <= HANDLE_SIZE) {
+            xDiff = 0
+          }
         }
         if (!isExpandingY) {
           if (boxHeight + yDiff <= MIN_SIZE) {
+            yDiff = 0
+          }
+        } else {
+          if (bottomLeft[1] >= svgHeight - HANDLE_SIZE) {
             yDiff = 0
           }
         }
