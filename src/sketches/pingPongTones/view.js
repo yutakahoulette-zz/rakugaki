@@ -37,7 +37,7 @@ const Wrapper = style('div')({
 })
 
 export function view(state, actions) {
-  const { resizerOldCoords, svgWidth, svgHeight } = state
+  const { resizerOldCoords, svgWidth, svgHeight, isPlaying } = state
   const bottomOffset = (ENV.navHeight || 0) + 'px'
   const style = {
     bottom: bottomOffset
@@ -76,7 +76,7 @@ export function view(state, actions) {
             )
           }}
         >
-          {Balls(state)}
+          {isPlaying && Balls(state)}
           {Segments(state)}
           {Handles(state, actions)}
         </svg>

@@ -31,7 +31,7 @@ const handlePartial = ({ actions, coords, i }) => ({
 export function Handles(state, actions) {
   const { cornerCoords } = state
   const rects = cornerCoords.map((coords, i) => {
-    const handle = handlePartial({ actions, state, coords, i })
+    const handle = handlePartial({ actions, coords, i })
     switch (i) {
       case 0:
         // Top left

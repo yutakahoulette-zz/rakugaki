@@ -2,14 +2,14 @@ import { h } from 'hyperapp'
 import { STROKE_WIDTH, COLORS } from './consts'
 import { coordsToPoints } from '../../utils/coordsToPoints'
 
-export function Segments({ segmentCoords, ballsCollisions }) {
+export function Segments({ segmentCoords, ballsCollisions, isPlaying }) {
   const groups = segmentCoords.map((coordPairs, i) => {
     const polylines = coordPairs.map((coords, ii) => {
       const key = `${i}-${ii}`
       const val = ballsCollisions[key]
       let stroke = 'black'
       let style = {}
-      if (val !== undefined) {
+      if (val !== undefined && isPlaying) {
         stroke = COLORS[val]
         let transform
         switch (i) {

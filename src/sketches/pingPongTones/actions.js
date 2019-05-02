@@ -3,8 +3,10 @@ import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import { percentInRange } from '../../utils/percentInRange'
 import { Frequency } from 'tone'
+import { raf } from '../../utils/raf'
 
 export const actions = {
+  get: (key) => (state) => state[key],
   set: (obj) => () => obj,
   handleResize: (resizerNewCoords) => (state) => {
     const {
@@ -190,9 +192,10 @@ export const actions = {
         synth.triggerAttackRelease(note, release / 1000)
       }
       window.setTimeout(() => {
-        delete ballsCollisions[ballsCollisionsKey]
+        const currentBallsCollisions = actions.get('ballsCollisions')
+        delete currentBallsCollisions[ballsCollisionsKey]
         actions.set({
-          ballsCollisions
+          ballsCollisions: currentBallsCollisions
         })
       }, release)
     }
@@ -291,6 +294,25 @@ export const actions = {
       key,
       val
     })
+  },
+  togglePlay: () => (
+    { isPlaying, end, ballsData, ballsCollisions },
+    actions
+  ) => {
+    if (isPlaying) {
+      end()
+      ballsData.forEach(({ synth }) => {
+        synth.triggerRelease()
+      })
+      return {
+        ballsCollisions: {},
+        isPlaying: false
+      }
+    }
+    return {
+      isPlaying: true,
+      end: raf(actions.updateBalls)
+    }
   }
 }
 

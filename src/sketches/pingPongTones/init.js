@@ -14,7 +14,6 @@ import {
 } from './consts'
 import { randomNum } from '../../utils/randomNum'
 import { gainToDb } from '../../utils/gainToDb'
-import { raf } from '../../utils/raf'
 
 export const init = (actions) => {
   const { ENV = {} } = window
@@ -132,7 +131,6 @@ export const init = (actions) => {
   actions.set({
     ...boxSizeAndOffsets,
     ballsData,
-    end: raf(actions.updateBalls),
     svgHeight: height,
     svgWidth: width,
     cornerCoords,

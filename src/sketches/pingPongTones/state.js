@@ -4,5 +4,6 @@ export const state = {
   ballsCollisions: {},
   cornerCoords: [],
   isShowingModal: false,
-  editIndex: 0
+  editIndex: 0,
+  isPlaying: false
 }

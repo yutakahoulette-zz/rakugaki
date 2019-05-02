@@ -290,6 +290,8 @@ function ControlsModal({ state, actions }) {
 }
 
 export function Controls(state, actions) {
+  const { isPlaying } = state
+  const { togglePlay } = actions
   return [
     <div id="controls" class="container--narrow">
       <div class="flex pb4 pt3">
@@ -313,7 +315,9 @@ export function Controls(state, actions) {
       </div>
       <div class="flex pb4">
         <div>
-          <button class="button">Play</button>
+          <button onclick={togglePlay} class="button">
+            {isPlaying ? 'Stop' : 'Play'}
+          </button>
         </div>
         <div>
           <label for="mute" class="pr2">
