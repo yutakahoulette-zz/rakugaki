@@ -171,7 +171,8 @@ export const actions = {
       rightOffset,
       topOffset,
       leftOffset,
-      bottomOffset
+      bottomOffset,
+      isMuted
     } = state
 
     const updateBallCollisions = (wallIndex, segmentIndex, ballsDataIndex) => {
@@ -189,7 +190,9 @@ export const actions = {
         if (octave) {
           note = Frequency(note).transpose(octave * 12)
         }
-        synth.triggerAttackRelease(note, release / 1000)
+        if (!isMuted) {
+          synth.triggerAttackRelease(note, release / 1000)
+        }
       }
       window.setTimeout(() => {
         const currentBallsCollisions = actions.get('ballsCollisions')
@@ -295,10 +298,17 @@ export const actions = {
       val
     })
   },
-  togglePlay: () => (
-    { isPlaying, end, ballsData, ballsCollisions },
-    actions
-  ) => {
+  toggleMute: () => ({ isMuted, ballsData }) => {
+    if (!isMuted) {
+      ballsData.forEach(({ synth }) => {
+        synth.triggerRelease()
+      })
+    }
+    return {
+      isMuted: !isMuted
+    }
+  },
+  togglePlay: () => ({ isPlaying, end, ballsData }, actions) => {
     if (isPlaying) {
       end()
       ballsData.forEach(({ synth }) => {

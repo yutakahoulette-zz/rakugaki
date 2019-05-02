@@ -5,5 +5,6 @@ export const state = {
   cornerCoords: [],
   isShowingModal: false,
   editIndex: 0,
-  isPlaying: false
+  isPlaying: false,
+  isMuted: false
 }

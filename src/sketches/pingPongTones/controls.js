@@ -290,8 +290,8 @@ function ControlsModal({ state, actions }) {
 }
 
 export function Controls(state, actions) {
-  const { isPlaying } = state
-  const { togglePlay } = actions
+  const { isPlaying, isMuted } = state
+  const { togglePlay, toggleMute } = actions
   return [
     <div id="controls" class="container--narrow">
       <div class="flex pb4 pt3">
@@ -323,7 +323,12 @@ export function Controls(state, actions) {
           <label for="mute" class="pr2">
             Mute
           </label>
-          <input id="mute" type="checkbox" checked={true} onchange={() => {}} />
+          <input
+            id="mute"
+            type="checkbox"
+            checked={isMuted}
+            onchange={toggleMute}
+          />
         </div>
         <SelectField options={['foo', 'bar']} label="Scale" />
       </div>
