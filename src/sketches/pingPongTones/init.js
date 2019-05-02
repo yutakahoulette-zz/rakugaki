@@ -1,5 +1,5 @@
 import { clamp } from 'ramda'
-import { Synth, JCReverb, FeedbackDelay, Chorus } from 'tone'
+import { Synth, JCReverb, FeedbackDelay, Chorus, Transport } from 'tone'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import {
@@ -14,6 +14,7 @@ import {
 } from './consts'
 import { randomNum } from '../../utils/randomNum'
 import { gainToDb } from '../../utils/gainToDb'
+import StartAudioContext from 'startaudiocontext'
 
 export const init = (actions) => {
   const { ENV = {} } = window
@@ -127,6 +128,8 @@ export const init = (actions) => {
   })
 
   const boxSizeAndOffsets = getBoxSizeAndOffsets(cornerCoords)
+
+  StartAudioContext(Transport.context, document.getElementById('audio-context'))
 
   actions.set({
     ...boxSizeAndOffsets,

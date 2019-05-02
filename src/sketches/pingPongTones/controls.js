@@ -315,7 +315,7 @@ export function Controls(state, actions) {
       </div>
       <div class="flex pb4">
         <div>
-          <button onclick={togglePlay} class="button">
+          <button onclick={togglePlay} class="button" id="audio-context">
             {isPlaying ? 'Stop' : 'Play'}
           </button>
         </div>
