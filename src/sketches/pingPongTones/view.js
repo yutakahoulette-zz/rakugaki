@@ -49,7 +49,7 @@ export function view(state, actions) {
         oncreate={() => {
           init(actions)
         }}
-        ondestroy={() => {}}
+        ondestroy={actions.cleanUp}
       >
         <svg
           width={svgWidth}

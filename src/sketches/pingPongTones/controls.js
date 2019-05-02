@@ -4,7 +4,8 @@ import {
   WAVES_ABBR,
   MAX_SPEED,
   MIN_RELEASE,
-  MAX_RELEASE
+  MAX_RELEASE,
+  SCALE_NAMES
 } from './consts'
 import { Modal } from '../../ui/modal'
 import { SelectField } from '../../ui/selectField'
@@ -29,6 +30,14 @@ const updateBallData = ({ actions, path, key, prop, transform }) => (val) => {
 const Col = ({}, children) => {
   return <div class="w-50 pb3">{children}</div>
 }
+
+// const Col = ({}, children) => {
+//   return (
+//     <div class="flex justify-between justify-around-ns w-100 w-50-ns pt3">
+//       {children}
+//     </div>
+//   )
+// }
 
 function ControlsModal({ state, actions }) {
   if (!state.isShowingModal) return
@@ -290,7 +299,7 @@ function ControlsModal({ state, actions }) {
 }
 
 export function Controls(state, actions) {
-  const { isPlaying, isMuted } = state
+  const { isPlaying, isMuted, selectedScale } = state
   const { togglePlay, toggleMute } = actions
   return [
     <div id="controls" class="container--narrow">
@@ -313,24 +322,35 @@ export function Controls(state, actions) {
           )
         })}
       </div>
-      <div class="flex pb4">
-        <div>
-          <button onclick={togglePlay} class="button" id="audio-context">
-            {isPlaying ? 'Stop' : 'Play'}
-          </button>
+      <div class="flex items-center justify-between pb4">
+        <div class="flex items-center justify-between">
+          <div class="pr4">
+            <button onclick={togglePlay} class="button" id="audio-context">
+              {isPlaying ? 'Stop' : 'Play'}
+            </button>
+          </div>
+          <div>
+            <label for="mute" class="pr2">
+              Mute?
+            </label>
+            <input
+              id="mute"
+              type="checkbox"
+              checked={isMuted}
+              onchange={toggleMute}
+            />
+          </div>
         </div>
-        <div>
-          <label for="mute" class="pr2">
-            Mute
-          </label>
-          <input
-            id="mute"
-            type="checkbox"
-            checked={isMuted}
-            onchange={toggleMute}
-          />
-        </div>
-        <SelectField options={['foo', 'bar']} label="Scale" />
+        <SelectField
+          options={SCALE_NAMES}
+          selected={selectedScale}
+          cb={(newScale) => {
+            actions.set({
+              selectedScale: newScale
+            })
+          }}
+          label="Scale"
+        />
       </div>
     </div>,
     <ControlsModal actions={actions} state={state} />

@@ -1,4 +1,5 @@
 import { MIN_SIZE, SEGMENT_COUNT, SCALES, HANDLE_SIZE } from './consts'
+import { defaultState } from './state'
 import { cornerCoordsToSegmentCoords } from './cornerCoordsToSegmentCoords'
 import { getBoxSizeAndOffsets } from './getBoxSizeAndOffsets'
 import { percentInRange } from '../../utils/percentInRange'
@@ -172,7 +173,8 @@ export const actions = {
       topOffset,
       leftOffset,
       bottomOffset,
-      isMuted
+      isMuted,
+      selectedScale
     } = state
 
     const updateBallCollisions = (wallIndex, segmentIndex, ballsDataIndex) => {
@@ -185,7 +187,8 @@ export const actions = {
       const ballsCollisionsKey = `${wallIndex}-${segmentIndex}`
       ballsCollisions[ballsCollisionsKey] = ballsDataIndex
       const { synth, release, octave } = ballsData[ballsDataIndex]
-      let note = SCALES.IONIAN[segmentIndex]
+      const scale = SCALES[selectedScale]
+      let note = scale[segmentIndex]
       if (note) {
         if (octave) {
           note = Frequency(note).transpose(octave * 12)
@@ -323,6 +326,14 @@ export const actions = {
       isPlaying: true,
       end: raf(actions.updateBalls)
     }
+  },
+  cleanUp: () => ({ end, ballsData }) => {
+    end && end()
+    ballsData.forEach(({ synth }) => {
+      synth.triggerRelease()
+      synth.dispose()
+    })
+    return defaultState
   }
 }
 
