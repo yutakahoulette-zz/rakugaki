@@ -36,6 +36,25 @@ const Wrapper = style('div')({
   display: 'flex'
 })
 
+const handlePointerUp = (actions) => (ev) => {
+  ev.stopPropagation()
+  ev.preventDefault()
+  actions.set({
+    resizerOldCoords: undefined
+  })
+}
+
+const handlePointerMove = ({ actions, isTouch, resizerOldCoords }) => (ev) => {
+  ev.stopPropagation()
+  ev.preventDefault()
+  if (resizerOldCoords === undefined) {
+    return
+  }
+  window.requestAnimationFrame(() =>
+    actions.handleResize(getClientXY(ev, isTouch))
+  )
+}
+
 export function view(state, actions) {
   const { resizerOldCoords, svgWidth, svgHeight, isPlaying } = state
   const bottomOffset = (ENV.navHeight || 0) + 'px'
@@ -54,27 +73,15 @@ export function view(state, actions) {
         <svg
           width={svgWidth}
           height={svgHeight}
-          onmouseleave={(ev) => {
-            ev.preventDefault()
-            actions.set({
-              resizerOldCoords: undefined
-            })
-          }}
-          onmouseup={(ev) => {
-            ev.preventDefault()
-            actions.set({
-              resizerOldCoords: undefined
-            })
-          }}
-          onmousemove={(ev) => {
-            ev.preventDefault()
-            if (resizerOldCoords === undefined) {
-              return
-            }
-            window.requestAnimationFrame(() =>
-              actions.handleResize(getClientXY(ev))
-            )
-          }}
+          onmouseleave={handlePointerUp(actions)}
+          onmouseup={handlePointerUp(actions)}
+          ontouchend={handlePointerUp(actions)}
+          onmousemove={handlePointerMove({ actions, resizerOldCoords })}
+          ontouchmove={handlePointerMove({
+            actions,
+            isTouch: true,
+            resizerOldCoords
+          })}
         >
           {isPlaying && Balls(state)}
           {Segments(state)}
