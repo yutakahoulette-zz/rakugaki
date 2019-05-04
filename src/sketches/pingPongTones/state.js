@@ -9,6 +9,7 @@ export const defaultState = {
   editIndex: 0,
   isPlaying: false,
   isMuted: false,
+  isLoading: true,
   selectedScale: SCALE_NAMES[0]
 }
 export const state = { ...defaultState }

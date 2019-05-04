@@ -137,6 +137,7 @@ export const init = (actions) => {
     svgHeight: height,
     svgWidth: width,
     cornerCoords,
+    isLoading: false,
     segmentCoords
   })
 }

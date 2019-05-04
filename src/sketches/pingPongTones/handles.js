@@ -1,6 +1,6 @@
 import { h } from 'hyperapp'
 import { getClientXY } from '../../utils/getClientXY'
-import { STROKE_WIDTH, HANDLE_OFFSET, COLORS, WAVES_ABBR } from './consts'
+import { STROKE_WIDTH, HANDLE_OFFSET } from './consts'
 
 const handlePointerDown = ({ i, actions, isTouch }) => (ev) => {
   ev.stopPropagation()

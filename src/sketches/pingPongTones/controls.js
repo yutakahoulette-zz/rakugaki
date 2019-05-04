@@ -31,14 +31,6 @@ const Col = ({}, children) => {
   return <div class="w-50 pb3">{children}</div>
 }
 
-// const Col = ({}, children) => {
-//   return (
-//     <div class="flex justify-between justify-around-ns w-100 w-50-ns pt3">
-//       {children}
-//     </div>
-//   )
-// }
-
 function ControlsModal({ state, actions }) {
   if (!state.isShowingModal) return
   const { editIndex, isShowingModal, ballsData } = state
@@ -299,10 +291,16 @@ function ControlsModal({ state, actions }) {
 }
 
 export function Controls(state, actions) {
-  const { isPlaying, isMuted, selectedScale } = state
+  const { isPlaying, isMuted, selectedScale, isLoading } = state
   const { togglePlay, toggleMute } = actions
   return [
-    <div id="controls" class="container--narrow">
+    <div
+      id="controls"
+      class="container--narrow"
+      style={{
+        opacity: isLoading ? '0' : '1'
+      }}
+    >
       <div class="flex pb4 pt3">
         {COLORS.map((_, i) => {
           return (
@@ -322,9 +320,9 @@ export function Controls(state, actions) {
           )
         })}
       </div>
-      <div class="flex items-center justify-between pb4">
+      <div class="flex items-center justify-between pb4 ph3">
         <div class="flex items-center justify-between">
-          <div class="pr4">
+          <div class="pr3">
             <button onclick={togglePlay} class="button" id="audio-context">
               {isPlaying ? 'Stop' : 'Play'}
             </button>
@@ -337,7 +335,7 @@ export function Controls(state, actions) {
               id="mute"
               type="checkbox"
               checked={isMuted}
-              onchange={toggleMute}
+              oninput={toggleMute}
             />
           </div>
         </div>
